@@ -32,17 +32,17 @@ class Race
     /**
      * @ORM\Column(type="simple_array")
      */
-    private $circuits;
+    private $circuits = [];
 
     /**
      * @ORM\Column(type="simple_array")
      */
-    private $distances;
+    private $distances = [];
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $age;
+    private $age = 0;
 
     /**
      * @ORM\Column(type="string")
@@ -50,12 +50,12 @@ class Race
     private $organizer;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $subscribe;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $result;
 
