@@ -20,28 +20,36 @@ class RunParserService
                 return $node->text();
             });
 
-            $race = $node->filter('td.inschrijflink a');
+            preg_match_all('/(\d+(?:,5)?)/', $raw[7], $distances);
+            preg_match('/(?:vanaf )?(\d+) jaar/', $raw[8], $age);
+
             $data = [
                 'date' => $raw[0],
                 'city' => $raw[1],
                 'circuits' => [
-                    'L' => strlen($raw[2]) === 1,
-                    'M' => strlen($raw[3]) === 1,
-                    'K' => strlen($raw[4]) === 1,
-                    'J' => strlen($raw[5]) === 1,
+                    'long' => strlen($raw[2]) === 1,
+                    'medium' => strlen($raw[3]) === 1,
+                    'short' => strlen($raw[4]) === 1,
+                    'youth' => strlen($raw[5]) === 1,
                 ],
-                'qualifier' => $raw[6],
-                'distance' => $raw[7],
-                'age' => $raw[8],
+                'qualifier' => strlen($raw[6]) > 10,
+                'distances' => $distances[0],
+                'age' => intval($age[1]),
                 'org' => [
                     'name' => $raw[9],
                     'url' => $node->filter('td#wedstrijdlink a')->attr('href'),
                 ],
-                'race' => [
-                    'text' => $raw[10],
-                    'url' => $race->count() ? $race->attr('href') : null,
-                ]
             ];
+
+            $race = $node->filter('td.inschrijflink a');
+            if($race->count() > 0) {
+                $data['subscribe'] = 'https://www.uvponline.nl' . $race->attr('href');
+            }
+
+            $result = $node->filter('td.uitslaglink_definitief a');
+            if($result->count() > 0) {
+                $data['result'] = $result->attr('href');
+            }
 
             return $data;
         });
