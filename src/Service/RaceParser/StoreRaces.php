@@ -24,17 +24,29 @@ class StoreRaces implements StageInterface
         $this->em = $em;
     }
 
-    public function __invoke($races)
+    public function __invoke($rawRaces)
     {
-        foreach ($races as $rawRace) {
-            dump($rawRace['city']);
+        $races = [];
+        foreach ($rawRaces as $rawRace) {
             $repo = $this->em->getRepository(Race::class);
             // First try to find existing race
-            $date = \DateTime::createFromFormat('d-m-Y', $rawRace['date']);
-            if($repo->findBy(['date' => $date, 'city' => $rawRace['city']])){
-                continue;
+            if (!($race = $repo->findOneBy(['date' => $rawRace['date'], 'city' => $rawRace['city']]))) {
+                $race = new Race();
+                $race
+                    ->setDate($rawRace['date'])
+                    ->setCity($rawRace['city'])
+                    ->setCircuits($rawRace['circuits'])
+                    ->setDistances($rawRace['distances'])
+                    ->setOrganizer($rawRace['org']['url'])
+                    ->setAge($rawRace['age'])
+                    ->setSubscribe($rawRace['subscriber'] ?? null)
+                    ->setResult($rawRace['result'] ?? null);
+
+                $this->em->persist($race);
             }
+            $races[] = $race;
         }
-        return null;
+        $this->em->flush();
+        return $races;
     }
 }

@@ -21,12 +21,11 @@ class GetRaces implements StageInterface
                 return $node->text();
             });
 
-            preg_match_all('/(\d+(?:,5)?)/', $raw[7], $distances);
+            preg_match_all('/(\d+(?:,5)?)/', str_replace('Estafette suvivalrun', '100 km', $raw[7]), $distances);
             preg_match('/(?:vanaf )?(\d+) jaar/', $raw[8], $age);
 
-
             $data = [
-                'date' => $raw[0],
+                'date' => \DateTime::createFromFormat('d-m-Y', $raw[0]),
                 'circuits' => [
                     'long' => strlen($raw[2]) === 1,
                     'medium' => strlen($raw[3]) === 1,
@@ -34,13 +33,21 @@ class GetRaces implements StageInterface
                     'youth' => strlen($raw[5]) === 1,
                 ],
                 'qualifier' => strlen($raw[6]) > 10,
-                'distances' => $distances[0],
+                'distances' => $distances[0] ?: ['100'],
                 'age' => intval($age[1]),
                 'org' => [
                     'name' => $raw[9],
                     'url' => $node->filter('td#wedstrijdlink a')->attr('href'),
                 ],
             ];
+            // flip the circuit types if true
+            $circuits = [];
+            foreach ($data['circuits'] as $type => $set) {
+                if($set) {
+                    $circuits[] = $type;
+                }
+            }
+            $data['circuits'] = $circuits ?: ['none'];
 
             // parse the city
             $city = strtolower($raw[1]);
