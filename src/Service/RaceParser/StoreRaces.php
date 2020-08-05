@@ -31,8 +31,7 @@ class StoreRaces implements StageInterface
             $repo = $this->em->getRepository(Race::class);
             // First try to find existing race
             if (!($race = $repo->findOneBy(['date' => $rawRace['date'], 'city' => $rawRace['city']]))) {
-                $race = new Race();
-                $race
+                $race = (new Race())
                     ->setDate($rawRace['date'])
                     ->setCity($rawRace['city'])
                     ->setCircuits($rawRace['circuits'])
