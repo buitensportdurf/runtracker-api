@@ -4,6 +4,7 @@
 namespace App\Service;
 
 
+use App\Entity\Race;
 use Symfony\Component\DomCrawler\Crawler;
 
 class RunParserService
