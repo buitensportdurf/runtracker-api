@@ -5,6 +5,7 @@ namespace App\Service;
 
 
 use App\Service\RaceParser\GetRaces;
+use App\Service\RaceParser\StoreRaces;
 use League\Pipeline\Pipeline;
 
 class RunParserService
@@ -14,10 +15,11 @@ class RunParserService
      */
     private $pipeline;
 
-    public function __construct(GetRaces $gr)
+    public function __construct(GetRaces $gr, StoreRaces $sr)
     {
         $this->pipeline = (new Pipeline())
-            ->pipe($gr);
+            ->pipe($gr)
+            ->pipe($sr);
 
     }
 

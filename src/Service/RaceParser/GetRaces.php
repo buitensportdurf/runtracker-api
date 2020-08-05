@@ -24,9 +24,9 @@ class GetRaces implements StageInterface
             preg_match_all('/(\d+(?:,5)?)/', $raw[7], $distances);
             preg_match('/(?:vanaf )?(\d+) jaar/', $raw[8], $age);
 
+
             $data = [
                 'date' => $raw[0],
-                'city' => $raw[1],
                 'circuits' => [
                     'long' => strlen($raw[2]) === 1,
                     'medium' => strlen($raw[3]) === 1,
@@ -42,13 +42,25 @@ class GetRaces implements StageInterface
                 ],
             ];
 
+            // parse the city
+            $city = strtolower($raw[1]);
+            if (strpos($city, 'afgelast') !== false) {
+                $data['cancelled'] = true;
+                $city = str_replace('afgelast ', '', $city);
+            }
+            $city = str_replace(['(za)', '(zo)'], ['', ''], $city);
+            // Remove championships, maybe parse later?
+            $city = str_replace([' onk lsr', ' onk msr', ' onk ksr', ' onk jsr', ' bk'], ['', '', '', '', ''], $city);
+            $data['city'] = trim($city);
+
+            // parse the subscribe url
             $race = $node->filter('td.inschrijflink a');
-            if($race->count() > 0) {
+            if ($race->count() > 0) {
                 $data['subscribe'] = 'https://www.uvponline.nl' . $race->attr('href');
             }
-
+            // parse result
             $result = $node->filter('td.uitslaglink_definitief a');
-            if($result->count() > 0) {
+            if ($result->count() > 0) {
                 $data['result'] = $result->attr('href');
             }
 

@@ -25,6 +25,11 @@ class Race
     private $id;
 
     /**
+     * @ORM\Column(type="date")
+     */
+    private $date;
+
+    /**
      * @ORM\Column(type="string")
      */
     private $city;
@@ -65,6 +70,24 @@ class Race
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param mixed $date
+     * @return Race
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+        return $this;
     }
 
     /**
