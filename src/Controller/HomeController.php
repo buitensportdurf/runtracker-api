@@ -4,8 +4,10 @@
 namespace App\Controller;
 
 
+use App\Entity\Race;
 use App\Service\RunParserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
@@ -17,5 +19,14 @@ class HomeController extends AbstractController
     {
         dump($rp->updateRuns());
         return $this->render('base.html.twig');
+    }
+
+    /**
+     * Retrieves one race
+     * @Route(path="/race/{id}")
+     */
+    public function getRaceAction(Race $race)
+    {
+        return $this->json($race);
     }
 }
