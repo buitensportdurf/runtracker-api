@@ -23,9 +23,9 @@ set('allow_anonymous_stats', false);
 host('runtracker.loken.nl')
     ->user('www-data')
     ->set('branch', function () {
-        return input()->getOption('branch') ?: 'develop';
+        return input()->getOption('branch') ?: 'master';
     })
-    ->set('deploy_path', '/var/www/runtracker.loken.nl');
+    ->set('deploy_path', '/var/www/api.survivalruns.nl');
 
 set('bin/console', function () {
     return parse('{{release_path}}/bin/console');
