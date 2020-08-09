@@ -43,7 +43,6 @@ task('database:migrate', function () {
     }
 
     run(sprintf('{{bin/php}} {{bin/console}} doctrine:migrations:migrate %s {{console_options}}', $options));
-//    run(sprintf('{{bin/php}} {{bin/console}} doctrine:schema:update --force'));
 });
 
 desc('Clear cache');
