@@ -7,7 +7,7 @@ require_once 'recipe/common.php';
 set('application', 'animerss');
 
 // Project repository
-set('repository', 'git@github.com:buitensportdurf/runtracker.git');
+set('repository', 'git@github.com:buitensportdurf/runtracker-api.git');
 
 // [Optional] Allocate tty for git clone. Default value is false.
 set('git_tty', true);
