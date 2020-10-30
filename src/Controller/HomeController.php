@@ -16,6 +16,14 @@ class HomeController extends AbstractController
      */
     public function index(RunParserService $rp)
     {
+        return $this->redirectToRoute('app.swagger_ui');
+    }
+
+    /**
+     * @Route("/parse")
+     */
+    public function parse(RunParserService $rp)
+    {
         dump($rp->updateRuns());
         return $this->render('base.html.twig');
     }

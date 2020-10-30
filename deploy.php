@@ -20,7 +20,7 @@ set('migrations_config', '');
 set('allow_anonymous_stats', false);
 
 // Hosts
-host('runtracker.loken.nl')
+host('api.survivalruns.nl')
     ->user('www-data')
     ->set('branch', function () {
         return input()->getOption('branch') ?: 'master';
