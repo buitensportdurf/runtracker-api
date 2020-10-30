@@ -11,6 +11,7 @@
         "doctrine/doctrine-migrations-bundle": "^2.2",
         "doctrine/orm": "^2.7",
         "friendsofsymfony/rest-bundle": "^3.0",
+        "knplabs/knp-paginator-bundle": "^5.3",
         "league/pipeline": "^1.0",
         "nelmio/api-doc-bundle": "^3.6",
         "phpdocumentor/reflection-docblock": "^5.2",
