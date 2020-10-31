@@ -8,9 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="race")
+ * @ORM\Table(name="run")
  */
-class Race
+class Run
 {
     public const CIRCUIT_LONG = 'long';
     public const CIRCUIT_MEDIUM = 'medium';
@@ -82,7 +82,7 @@ class Race
 
     /**
      * @param mixed $date
-     * @return Race
+     * @return Run
      */
     public function setDate($date)
     {
@@ -100,7 +100,7 @@ class Race
 
     /**
      * @param mixed $city
-     * @return Race
+     * @return Run
      */
     public function setCity($city)
     {
@@ -118,7 +118,7 @@ class Race
 
     /**
      * @param mixed $circuits
-     * @return Race
+     * @return Run
      */
     public function setCircuits($circuits)
     {
@@ -136,7 +136,7 @@ class Race
 
     /**
      * @param mixed $distances
-     * @return Race
+     * @return Run
      */
     public function setDistances($distances)
     {
@@ -154,7 +154,7 @@ class Race
 
     /**
      * @param mixed $age
-     * @return Race
+     * @return Run
      */
     public function setAge($age)
     {
@@ -172,7 +172,7 @@ class Race
 
     /**
      * @param mixed $organizer
-     * @return Race
+     * @return Run
      */
     public function setOrganizer($organizer)
     {
@@ -190,7 +190,7 @@ class Race
 
     /**
      * @param mixed $subscribe
-     * @return Race
+     * @return Run
      */
     public function setSubscribe($subscribe)
     {
@@ -208,7 +208,7 @@ class Race
 
     /**
      * @param mixed $result
-     * @return Race
+     * @return Run
      */
     public function setResult($result)
     {
