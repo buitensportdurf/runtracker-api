@@ -4,7 +4,6 @@
 namespace App\Controller\Api;
 
 
-use App\Collections\PaginatedCollection;
 use App\Entity\Run;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -48,7 +47,7 @@ class ApiController extends AbstractFOSRestController
 
         $runs = $paginator->paginate($query, $page, $pageSize);
 
-        return $this->handleView($this->view(new PaginatedCollection($runs), 200));
+        return $this->handleView($this->view(['run' => $runs], 200));
     }
 
     /**

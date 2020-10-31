@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Collections;
+namespace App\Collection;
 
 
 use Knp\Component\Pager\Pagination\PaginationInterface;

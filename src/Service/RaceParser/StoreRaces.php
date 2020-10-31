@@ -28,10 +28,10 @@ class StoreRaces implements StageInterface
     {
         $races = [];
         foreach ($rawRaces as $rawRace) {
-            $repo = $this->em->getRepository(Race::class);
+            $repo = $this->em->getRepository(Run::class);
             // First try to find existing race
             if (!($race = $repo->findOneBy(['date' => $rawRace['date'], 'city' => $rawRace['city']]))) {
-                $race = (new Race())
+                $race = (new Run())
                     ->setDate($rawRace['date'])
                     ->setCity($rawRace['city'])
                     ->setCircuits($rawRace['circuits'])
