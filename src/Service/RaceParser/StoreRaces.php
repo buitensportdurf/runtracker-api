@@ -4,7 +4,7 @@
 namespace App\Service\RaceParser;
 
 
-use App\Entity\Race;
+use App\Entity\Run;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Pipeline\StageInterface;
 
