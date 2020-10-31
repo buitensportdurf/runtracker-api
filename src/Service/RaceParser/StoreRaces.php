@@ -4,6 +4,7 @@
 namespace App\Service\RaceParser;
 
 
+use App\Entity\Organization;
 use App\Entity\Run;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Pipeline\StageInterface;
@@ -28,22 +29,32 @@ class StoreRaces implements StageInterface
     {
         $races = [];
         foreach ($rawRaces as $rawRace) {
-            $repo = $this->em->getRepository(Run::class);
-            // First try to find existing race
-            if (!($race = $repo->findOneBy(['date' => $rawRace['date'], 'city' => $rawRace['city']]))) {
-                $race = (new Run())
+            $runRepo = $this->em->getRepository(Run::class);
+            // First try to find existing run
+            if (!($run = $runRepo->findOneBy(['date' => $rawRace['date'], 'city' => $rawRace['city']]))) {
+                // Get the organization or create if not already exists
+                $organizationRepo = $this->em->getRepository(Organization::class);
+                if (!($organization = $organizationRepo->findOneBy(['name' => $rawRace['org']['name']]))) {
+                    $organization = (new Organization())
+                        ->setName($rawRace['org']['name'])
+                        ->setWebsite($rawRace['org']['url']);
+                    $this->em->persist($organization);
+                    $this->em->flush(); // Flush to make sure we don't get duplicate entries
+                }
+
+                $run = (new Run())
                     ->setDate($rawRace['date'])
                     ->setCity($rawRace['city'])
                     ->setCircuits($rawRace['circuits'])
                     ->setDistances($rawRace['distances'])
-                    ->setOrganizer($rawRace['org']['url'])
+                    ->setOrganization($organization)
                     ->setAge($rawRace['age'])
                     ->setSubscribe($rawRace['subscriber'] ?? null)
                     ->setResult($rawRace['result'] ?? null);
 
-                $this->em->persist($race);
+                $this->em->persist($run);
             }
-            $races[] = $race;
+            $races[] = $run;
         }
         $this->em->flush();
         return $races;

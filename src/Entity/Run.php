@@ -50,9 +50,9 @@ class Run
     private $age = 0;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization")
      */
-    private $organizer;
+    private $organization;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -163,20 +163,20 @@ class Run
     }
 
     /**
-     * @return mixed
+     * @return Organization
      */
-    public function getOrganizer()
+    public function getOrganization()
     {
-        return $this->organizer;
+        return $this->organization;
     }
 
     /**
-     * @param mixed $organizer
+     * @param Organization $organization
      * @return Run
      */
-    public function setOrganizer($organizer)
+    public function setOrganization(Organization $organization)
     {
-        $this->organizer = $organizer;
+        $this->organization = $organization;
         return $this;
     }
 

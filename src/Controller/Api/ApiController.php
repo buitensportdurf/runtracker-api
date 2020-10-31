@@ -25,27 +25,21 @@ class ApiController extends AbstractFOSRestController
      *         type="array",
      *         @SWG\Items(
      *             type="object",
-     *             @SWG\Property(property="total", type="integer"),
-     *             @SWG\Property(property="count", type="integer"),
-     *             @SWG\Property(property="items", type="array", @SWG\Items(ref=@Model(type=Run::class)))
+     *             @SWG\Property(property="run", type="array", @SWG\Items(ref=@Model(type=Run::class)))
      *         )
      *     )
-     * )
-     * @SWG\Parameter(
-     *     name="page",
-     *     in="query",
-     *     type="integer"
      * )
      */
     public function getRunsAction(EntityManagerInterface $em, PaginatorInterface $paginator, Request $request)
     {
-        $page = $request->query->getInt('page', 1);
-        $pageSize = $request->query->getInt('page_size', 10);
-
-        $repo = $em->getRepository(Run::class);
-        $query = $repo->createQueryBuilder('r')->getQuery();
-
-        $runs = $paginator->paginate($query, $page, $pageSize);
+//        $page = $request->query->getInt('page', 1);
+//        $pageSize = $request->query->getInt('page_size', 10);
+//
+//        $repo = $em->getRepository(Run::class);
+//        $query = $repo->createQueryBuilder('r')->getQuery();
+//
+//        $runs = $paginator->paginate($query, $page, $pageSize);
+        $runs = $em->getRepository(Run::class)->findAll();
 
         return $this->handleView($this->view(['run' => $runs], 200));
     }
