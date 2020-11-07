@@ -5,7 +5,6 @@ namespace App\Service\RaceParser;
 
 
 use League\Pipeline\StageInterface;
-use phpDocumentor\Reflection\DocBlock\Tags\Return_;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ParseParticipants implements StageInterface
@@ -17,21 +16,24 @@ class ParseParticipants implements StageInterface
         foreach ($rawRaces as $rawRace) {
             $id = $rawRace['subscribeId'];
             if ($id !== -1) {
-                $categories = $this->getCategories($id);
+                $categories = $this->getCircuits($id);
+                dd($categories);
             }
         }
     }
 
-    private function getCategories($id)
+    private function getCircuits($id)
     {
         $crawler = new Crawler(file_get_contents(sprintf('%s/%s', self::BASE_URL, $id)));
         $crawler = $crawler->filter('div#ingeschreven_cats li');
 
-        $data = $crawler->each(function (Crawler $node) {
-            $url = $node->filter('span.cat_beschrijving_step1 a')->attr('href');
-            return $this->getParticipants($url);
+        return $crawler->each(function (Crawler $node) {
+            $link = $node->filter('span.cat_beschrijving_step1 a');
+            return [
+                'name' => $link->text(),
+                'participants' => $this->getParticipants($link->attr('href'))
+            ];
         });
-        dd($data);
     }
 
     private function getParticipants($url)
