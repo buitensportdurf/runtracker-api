@@ -9,7 +9,7 @@ use App\Entity\Run;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Pipeline\StageInterface;
 
-class StoreRaces implements StageInterface
+class StoreRuns implements StageInterface
 {
     /**
      * @var EntityManagerInterface
@@ -27,11 +27,11 @@ class StoreRaces implements StageInterface
 
     public function __invoke($rawRaces)
     {
-        $races = [];
         foreach ($rawRaces as $rawRace) {
             $runRepo = $this->em->getRepository(Run::class);
             // First try to find existing run
             if (!($run = $runRepo->findOneBy(['date' => $rawRace['date'], 'city' => $rawRace['city']]))) {
+
                 // Get the organization or create if not already exists
                 $organizationRepo = $this->em->getRepository(Organization::class);
                 if (!($organization = $organizationRepo->findOneBy(['name' => $rawRace['org']['name']]))) {
@@ -42,6 +42,7 @@ class StoreRaces implements StageInterface
                     $this->em->flush(); // Flush to make sure we don't get duplicate entries
                 }
 
+                // Create the run
                 $run = (new Run())
                     ->setDate($rawRace['date'])
                     ->setCity($rawRace['city'])
@@ -54,9 +55,8 @@ class StoreRaces implements StageInterface
 
                 $this->em->persist($run);
             }
-            $races[] = $run;
         }
         $this->em->flush();
-        return $races;
+        return $rawRaces;
     }
 }

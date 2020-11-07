@@ -23,7 +23,7 @@ set('allow_anonymous_stats', false);
 host('api.survivalruns.nl')
     ->user('www-data')
     ->set('branch', function () {
-        return input()->getOption('branch') ?: 'master';
+        return input()->getOption('branch') ?: 'develop';
     })
     ->set('deploy_path', '/var/www/api.survivalruns.nl');
 
