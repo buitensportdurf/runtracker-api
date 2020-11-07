@@ -4,19 +4,37 @@
 namespace App\Service\RaceParser;
 
 
+use http\Url;
 use League\Pipeline\StageInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ParseRuns implements StageInterface
 {
     private $url = "https://www.uvponline.nl/uvponlineU/index.php/uvproot/wedstrijdschema/2020";
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * ParseRuns constructor.
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+
     public function __invoke($payload)
     {
+        $this->logger->info(sprintf('Runs [%s] Start parsing runs overview', $this->url));
         $crawler = new Crawler(file_get_contents($this->url));
 
         $crawler = $crawler->filter('table.wedstrijdagenda tr')->nextAll();
-        return $crawler->each(function (Crawler $node) {
+        $runs = $crawler->each(function (Crawler $node) {
             $rawText = $node->filter('td')->each(function (Crawler $node) {
                 return $node->text();
             });
@@ -31,12 +49,12 @@ class ParseRuns implements StageInterface
             // Try to parse the UVP subscribe ID which might not be gettable if not announced
             $url = $node->filter('td.inschrijflink a');
             $subscribeId = -1;
-            if($url->count() > 0){
+            if ($url->count() > 0) {
                 preg_match('/\/uvponlineF\/inschrijven\/(\d+)/', $url->attr('href'), $idMatches);
                 $subscribeId = intval($idMatches[1]);
             }
 
-            $data = [
+            $run = [
                 'date' => \DateTime::createFromFormat('d-m-Y', $rawText[0]),
                 'circuits' => [
                     'long' => strlen($rawText[2]) === 1,
@@ -55,36 +73,38 @@ class ParseRuns implements StageInterface
             ];
             // flip the circuit types if true
             $circuits = [];
-            foreach ($data['circuits'] as $type => $set) {
+            foreach ($run['circuits'] as $type => $set) {
                 if ($set) {
                     $circuits[] = $type;
                 }
             }
-            $data['circuits'] = $circuits ?: ['none'];
+            $run['circuits'] = $circuits ?: ['none'];
 
             // parse the city
             $city = $rawText[1];
             if (strpos($city, 'AFGELAST') !== false) {
-                $data['cancelled'] = true;
+                $run['cancelled'] = true;
                 $city = str_replace('AFGELAST ', '', $city);
             }
             $city = str_replace(['(za)', '(zo)'], ['', ''], $city);
             // Remove championships, maybe parse later?
             $city = str_replace([' ONK LSR', ' ONK MSR', ' ONK KSR', ' ONK JSR', ' BK'], ['', '', '', '', ''], $city);
-            $data['city'] = trim($city);
+            $run['city'] = trim($city);
 
             // parse the subscribe url
 //            $race = $node->filter('td.inschrijflink a');
 //            if ($race->count() > 0) {
-//                $data['subscribe'] = 'https://www.uvponline.nl' . $race->attr('href');
+//                $run['subscribe'] = 'https://www.uvponline.nl' . $race->attr('href');
 //            }
             // parse result
             $result = $node->filter('td.uitslaglink_definitief a');
             if ($result->count() > 0) {
-                $data['result'] = $result->attr('href');
+                $run['result'] = $result->attr('href');
             }
 
-            return $data;
+            return $run;
         });
+        $this->logger->info(sprintf('Runs [%s] Found %d runs', $this->url, count($runs)));
+        return $runs;
     }
 }
