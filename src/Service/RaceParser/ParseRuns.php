@@ -27,7 +27,6 @@ class ParseRuns implements StageInterface
         $this->logger = $logger;
     }
 
-
     public function __invoke($payload)
     {
         $this->logger->info(sprintf('Runs [%s] Start parsing runs overview', $this->url));
@@ -56,12 +55,12 @@ class ParseRuns implements StageInterface
 
             $run = [
                 'date' => \DateTime::createFromFormat('d-m-Y', $rawText[0]),
-                'circuits' => [
-                    'long' => strlen($rawText[2]) === 1,
-                    'medium' => strlen($rawText[3]) === 1,
-                    'short' => strlen($rawText[4]) === 1,
-                    'youth' => strlen($rawText[5]) === 1,
-                ],
+//                'circuits' => [
+//                    'long' => strlen($rawText[2]) === 1,
+//                    'medium' => strlen($rawText[3]) === 1,
+//                    'short' => strlen($rawText[4]) === 1,
+//                    'youth' => strlen($rawText[5]) === 1,
+//                ],
                 'qualifier' => strlen($rawText[6]) > 10,
                 'distances' => $distances[0] ?: ['100'],
                 'age' => intval($age[1]),
@@ -72,13 +71,13 @@ class ParseRuns implements StageInterface
                 'subscribeId' => $subscribeId,
             ];
             // flip the circuit types if true
-            $circuits = [];
-            foreach ($run['circuits'] as $type => $set) {
-                if ($set) {
-                    $circuits[] = $type;
-                }
-            }
-            $run['circuits'] = $circuits ?: ['none'];
+//            $circuits = [];
+//            foreach ($run['circuits'] as $type => $set) {
+//                if ($set) {
+//                    $circuits[] = $type;
+//                }
+//            }
+//            $run['circuits'] = $circuits ?: ['none'];
 
             // parse the city
             $city = $rawText[1];

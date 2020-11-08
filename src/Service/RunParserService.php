@@ -20,9 +20,8 @@ class RunParserService
     {
         $this->pipeline = (new Pipeline())
             ->pipe($gr)
-            ->pipe($sr)
-            ->pipe($pp);
-
+            ->pipe($pp)
+            ->pipe($sr);
     }
 
     public function updateRuns()

@@ -30,6 +30,11 @@ class Organization
      */
     private $website;
 
+    public function __toString()
+    {
+        return $this->name;
+    }
+
     /**
      * @return mixed
      */

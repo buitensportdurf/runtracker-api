@@ -61,6 +61,11 @@ class User implements UserInterface
      */
     private $password;
 
+    public function __toString()
+    {
+        return $this->firstName . ' ' . $this->lastName;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

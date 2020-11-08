@@ -30,7 +30,8 @@ class ParseParticipants implements StageInterface
             $id = $rawRace['subscribeId'];
             if ($id !== -1) {
                 $rawRace['circuits'] = $this->getCircuits($id);
-                dd($rawRace);
+            } else {
+                $rawRace['circuits'] = [];
             }
             unset($rawRace);
         }
@@ -40,9 +41,13 @@ class ParseParticipants implements StageInterface
     private function getCircuits(int $id)
     {
         // Parse the circuit data
-//        $circuits = $this->getCircuitsParticipants($id);
-        $data = $this->getCircuitsData($id);
-        dd($data);
+        $circuitsP = $this->getCircuitsParticipants($id);
+        $circuitsD = $this->getCircuitsData($id);
+        $circuits = [];
+        foreach ($circuitsP as $key => $circuit) {
+            $circuit += $circuitsD[$key];
+            $circuits[] = $circuit;
+        }
 
         $this->logger->info(sprintf('Circuits [%d] Found %d circuits', $id, count($circuits)));
         return $circuits;
@@ -80,11 +85,15 @@ class ParseParticipants implements StageInterface
             $circuit['participants_current'] = intval($fullness[0]);
             $circuit['participants_max'] = intval($fullness[2]);
 
-            $description = strtolower($node->filter('span.cat_beschrijving_step1')->text());
+            $description = substr(strtolower($node->filter('span.cat_beschrijving_step1')->text()), 2);
             $circuit['raw_name'] = $description;
             // Get the distance
             preg_match('/([\d]) ?(?:km)/', $description, $distances);
-            $circuit['distance'] = intval($distances[1]);
+            if (count($distances) > 1) {
+                $circuit['distance'] = intval($distances[1]);
+            } else {
+                $circuit['distance'] = 100;
+            }
 
             // Get the price
             preg_match('/€ ?(\d+\.\d{2})/', $description, $prices);
@@ -107,6 +116,11 @@ class ParseParticipants implements StageInterface
             } else {
                 $circuit['type'] = 'unknown';
             }
+
+            // Todo: parse
+            $circuit['min_age'] = 0;
+            $circuit['max_age'] = 100;
+            $circuit['points'] = 0;
 
             return $circuit;
         });
@@ -154,7 +168,6 @@ class ParseParticipants implements StageInterface
 
     private function sanitize($text)
     {
-        $new = preg_replace('/\PL/u', '', $text);
-        return $new;
+        return preg_replace('/\PL/u', '', $text);
     }
 }

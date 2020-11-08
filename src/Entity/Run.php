@@ -4,6 +4,7 @@
 namespace App\Entity;
 
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -25,6 +26,7 @@ class Run
     private $id;
 
     /**
+     * @var DateTime
      * @ORM\Column(type="date")
      */
     private $date;
@@ -33,16 +35,6 @@ class Run
      * @ORM\Column(type="string")
      */
     private $city;
-
-    /**
-     * @ORM\Column(type="simple_array")
-     */
-    private $circuits = [];
-
-    /**
-     * @ORM\Column(type="simple_array")
-     */
-    private $distances = [];
 
     /**
      * @ORM\Column(type="integer")
@@ -63,6 +55,11 @@ class Run
      * @ORM\Column(type="string", nullable=true)
      */
     private $result;
+
+    public function __toString()
+    {
+        return sprintf('%s in %s', $this->date->format('Y-m-d'), $this->city);
+    }
 
     /**
      * @return mixed
@@ -105,42 +102,6 @@ class Run
     public function setCity($city)
     {
         $this->city = $city;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCircuits()
-    {
-        return $this->circuits;
-    }
-
-    /**
-     * @param mixed $circuits
-     * @return Run
-     */
-    public function setCircuits($circuits)
-    {
-        $this->circuits = $circuits;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDistances()
-    {
-        return $this->distances;
-    }
-
-    /**
-     * @param mixed $distances
-     * @return Run
-     */
-    public function setDistances($distances)
-    {
-        $this->distances = $distances;
         return $this;
     }
 
