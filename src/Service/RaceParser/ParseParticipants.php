@@ -10,7 +10,8 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ParseParticipants implements StageInterface
 {
-    private const BASE_URL = 'https://www.uvponline.nl/uvponlineF/inschrijven_overzicht/';
+    private const PARTICIPANTS_URL = 'https://www.uvponline.nl/uvponlineF/inschrijven_overzicht/';
+    private const CIRCUIT_NAME_URL = 'https://www.uvponline.nl/uvponlineF/inschrijven/';
 
     /**
      * @var LoggerInterface
@@ -38,20 +39,90 @@ class ParseParticipants implements StageInterface
 
     private function getCircuits(int $id)
     {
-        $url = sprintf('%s%s', self::BASE_URL, $id);
-        $this->logger->info(sprintf('Circuits [%s] Getting all circuits', $url));
+        // Parse the circuit data
+//        $circuits = $this->getCircuitsParticipants($id);
+        $data = $this->getCircuitsData($id);
+        dd($data);
+
+        $this->logger->info(sprintf('Circuits [%d] Found %d circuits', $id, count($circuits)));
+        return $circuits;
+    }
+
+    private function getCircuitsParticipants($id)
+    {
+        $url = sprintf('%s%s', self::PARTICIPANTS_URL, $id);
+        $this->logger->info(sprintf('Circuits [%s] Getting all circuits for participants', $url));
         $crawler = new Crawler(file_get_contents($url));
         $crawler = $crawler->filter('div#ingeschreven_cats li');
 
-        $circuits = $crawler->each(function (Crawler $node) {
+        // Parse the participants
+        return $crawler->each(function (Crawler $node) {
             $link = $node->filter('span.cat_beschrijving_step1 a');
             return [
-                'name' => $link->text(),
                 'participants' => $this->getParticipants($link->attr('href'))
             ];
         });
-        $this->logger->info(sprintf('Circuits [%s] Found %d circuits', $url, count($circuits)));
-        return $circuits;
+    }
+
+    private function getCircuitsData($id)
+    {
+        $url = sprintf('%s%s', self::CIRCUIT_NAME_URL, $id);
+        $this->logger->info(sprintf('Circuits [%s] Getting all circuits for data', $url));
+        $crawler = new Crawler(file_get_contents($url));
+        $crawler = $crawler->filter('div#categorieen li');
+
+        // Parse the data
+        return $crawler->each(function (Crawler $node) {
+            $circuit = [];
+            $fullness = $node->filter('span.stat_box_values td')->each(function (Crawler $node) {
+                return $node->text();
+            });
+            $circuit['participants_current'] = intval($fullness[0]);
+            $circuit['participants_max'] = intval($fullness[2]);
+
+            $description = strtolower($node->filter('span.cat_beschrijving_step1')->text());
+            $circuit['raw_name'] = $description;
+            // Get the distance
+            preg_match('/([\d]) ?(?:km)/', $description, $distances);
+            $circuit['distance'] = intval($distances[1]);
+
+            // Get the price
+            preg_match('/€ ?(\d+\.\d{2})/', $description, $prices);
+            $circuit['price'] = floatval($prices[1]);
+
+            // Get the group size
+            if ($this->containsOneOfWords($description, ['koppel'])) {
+                $circuit['group_size'] = 2;
+            } elseif ($this->containsOneOfWords($description, ['groep'])) {
+                // todo: parse '(max) {n} personen/deelnemers'
+                $circuit['group_size'] = 5;
+            } else {
+                // default to individual
+                $circuit['group_size'] = 1;
+            }
+
+            // Get the type
+            if ($type = $this->findOneOfWords($description, ['recreatief', 'begeleid', 'wedstrijd'])) {
+                $circuit['type'] = $type;
+            } else {
+                $circuit['type'] = 'unknown';
+            }
+
+            return $circuit;
+        });
+    }
+
+    private function containsOneOfWords(string $text, array $words)
+    {
+        return preg_match(sprintf('/(%s)/', implode('|', $words)), $text) === 1;
+    }
+
+    private function findOneOfWords(string $text, array $words)
+    {
+        if (preg_match(sprintf('/(%s)/', implode('|', $words)), $text, $matches) === 1) {
+            return $matches[1];
+        }
+        return false;
     }
 
     private function getParticipants(string $url)

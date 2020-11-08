@@ -20,29 +20,34 @@ class Circuit
     private $id;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="string")
+     */
+    private $rawName;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
      */
     private $distance;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $type;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $groupSize;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
-    private $minAge = 0;
+    private $minAge;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
-    private $maxAge = 100;
+    private $maxAge;
 
     /**
      * @ORM\Column(type="string", nullable=true)
