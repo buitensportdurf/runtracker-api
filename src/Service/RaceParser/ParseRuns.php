@@ -84,6 +84,8 @@ class ParseRuns implements StageInterface
             if (strpos($city, 'AFGELAST') !== false) {
                 $run['cancelled'] = true;
                 $city = str_replace('AFGELAST ', '', $city);
+            } else {
+                $run['cancelled'] = false;
             }
             $city = str_replace(['(za)', '(zo)'], ['', ''], $city);
             // Remove championships, maybe parse later?

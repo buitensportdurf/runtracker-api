@@ -58,6 +58,14 @@ class Run
     private $organization;
 
     /**
+     * @var boolean
+     * @Groups({"from_run"})
+     * @ORM\Column(type="boolean")
+     */
+    private $cancelled = false;
+
+    /**
+     * subscribe url
      * @var string
      * @Groups({"from_run"})
      * @ORM\Column(type="string", nullable=true)
@@ -65,6 +73,7 @@ class Run
     private $subscribe;
 
     /**
+     * results url
      * @var string
      * @Groups({"from_run"})
      * @ORM\Column(type="string", nullable=true)
@@ -161,6 +170,24 @@ class Run
     public function setOrganization(Organization $organization)
     {
         $this->organization = $organization;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCancelled(): bool
+    {
+        return $this->cancelled;
+    }
+
+    /**
+     * @param bool $cancelled
+     * @return Run
+     */
+    public function setCancelled(bool $cancelled): Run
+    {
+        $this->cancelled = $cancelled;
         return $this;
     }
 

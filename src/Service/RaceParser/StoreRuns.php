@@ -62,6 +62,7 @@ class StoreRuns implements StageInterface
                     ->setCity($rawRace['city'])
                     ->setOrganization($organization)
                     ->setAge($rawRace['age'])
+                    ->setCancelled($rawRace['cancelled'])
                     ->setSubscribe($rawRace['subscriber'] ?? null)
                     ->setResult($rawRace['result'] ?? null);
 
