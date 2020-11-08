@@ -5,7 +5,7 @@ namespace App\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity
@@ -14,6 +14,7 @@ use Symfony\Component\Serializer\Annotation\Ignore;
 class Organization
 {
     /**
+     * @Groups({"from_run"})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
@@ -21,6 +22,7 @@ class Organization
     private $id;
 
     /**
+     * @Groups({"from_run"})
      * @ORM\Column(type="string", unique=true)
      */
     private $name;

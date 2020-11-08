@@ -70,7 +70,6 @@ class StoreRuns implements StageInterface
             }
 
             // Create the circuits and participants
-
             $this->logger->info('Start storing circuits and users');
             foreach ($rawRace['circuits'] as $rawCircuit) {
                 if (!($circuit = $circuitRepo->findOneBy(['rawName' => $rawCircuit['raw_name']]))) {

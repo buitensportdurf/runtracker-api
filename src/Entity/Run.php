@@ -6,6 +6,9 @@ namespace App\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Swagger\Annotations as SWG;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity
@@ -19,6 +22,7 @@ class Run
     public const CIRCUIT_YOUTH = 'youth';
 
     /**
+     * @var integer
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
@@ -27,34 +31,53 @@ class Run
 
     /**
      * @var DateTime
+     * @Groups({"from_run"})
      * @ORM\Column(type="date")
      */
     private $date;
 
     /**
+     * @var string
+     * @Groups({"from_run"})
      * @ORM\Column(type="string")
      */
     private $city;
 
     /**
+     * @var integer
+     * @Groups({"from_run"})
      * @ORM\Column(type="integer")
      */
     private $age = 0;
 
     /**
+     * @var Organization
+     * @Groups({"from_run"})
      * @ORM\ManyToOne(targetEntity="App\Entity\Organization")
      */
     private $organization;
 
     /**
+     * @var string
+     * @Groups({"from_run"})
      * @ORM\Column(type="string", nullable=true)
      */
     private $subscribe;
 
     /**
+     * @var string
+     * @Groups({"from_run"})
      * @ORM\Column(type="string", nullable=true)
      */
     private $result;
+
+    /**
+     * @var ?Circuit[]
+     * @Groups({"from_run"})
+     * @SWG\Property (type="array", @SWG\Items(type="bla"))
+     * @ORM\OneToMany(targetEntity="App\Entity\Circuit", mappedBy="run")
+     */
+    private $circuits;
 
     public function __toString()
     {
@@ -175,5 +198,13 @@ class Run
     {
         $this->result = $result;
         return $this;
+    }
+
+    /**
+     * @return Circuit[]|null
+     */
+    public function getCircuits()
+    {
+        return $this->circuits;
     }
 }

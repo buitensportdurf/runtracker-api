@@ -5,6 +5,8 @@ namespace App\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 /**
  * @ORM\Entity
@@ -14,6 +16,7 @@ class Circuit
 {
     /**
      * @var integer
+     * @Groups({"from_run"})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
@@ -22,60 +25,70 @@ class Circuit
 
     /**
      * @var Run
-     * @ORM\ManyToOne(targetEntity="App\Entity\Run")
+     * @Groups({"from_circuit"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Run", inversedBy="circuits")
      */
     private $run;
 
     /**
      * @var User[]
+     * @Groups({"from_circuit"})
      * @ORM\ManyToMany(targetEntity="App\Entity\User")
      */
     private $users = [];
 
     /**
      * @var string
+     * @Groups({"from_run"})
      * @ORM\Column(type="string")
      */
     private $rawName;
 
     /**
      * @var ?float
+     * @Groups({"from_run"})
      * @ORM\Column(type="float", nullable=true)
      */
     private $distance;
 
     /**
      * @var ?string
+     * @Groups({"from_run"})
      * @ORM\Column(type="string", nullable=true)
      */
     private $type;
 
     /**
      * @var ?integer
+     * @Groups({"from_run"})
      * @ORM\Column(type="integer", nullable=true)
      */
     private $groupSize;
 
     /**
      * @var ?integer
+     * @Groups({"from_run"})
      * @ORM\Column(type="integer", nullable=true)
      */
     private $minAge;
 
     /**
      * @var ?integer
+     * @Groups({"from_run"})
      * @ORM\Column(type="integer", nullable=true)
      */
     private $maxAge;
 
     /**
      * @var ?string
+     * @Groups({"from_run"})
      * @ORM\Column(type="string", nullable=true)
      */
     private $description;
 
     /**
      * @var ?integer
+     * @Groups({"from_run"})
      * @ORM\Column(type="integer")
      */
     private $price;
@@ -120,7 +133,7 @@ class Circuit
     /**
      * @return User[]
      */
-    public function getUsers(): array
+    public function getUsers()
     {
         return $this->users;
     }

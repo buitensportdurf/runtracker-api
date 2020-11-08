@@ -18,15 +18,13 @@ class ApiController extends AbstractFOSRestController
     /**
      * Retrieves all runs
      * @Rest\Get(path="/runs")
+     * @Rest\View(serializerGroups={"from_run"})
      * @SWG\Response(
      *     response=200,
      *     description="Returns all runs",
      *     @SWG\Schema(
-     *         type="array",
-     *         @SWG\Items(
-     *             type="object",
-     *             @SWG\Property(property="run", type="array", @SWG\Items(ref=@Model(type=Run::class)))
-     *         )
+     *         type="object",
+     *         @SWG\Property(property="run", type="array", @SWG\Items(ref=@Model(type=Run::class)))
      *     )
      * )
      */
@@ -41,12 +39,13 @@ class ApiController extends AbstractFOSRestController
 //        $runs = $paginator->paginate($query, $page, $pageSize);
         $runs = $em->getRepository(Run::class)->findAll();
 
-        return $this->handleView($this->view(['run' => $runs], 200));
+        return ['run' => $runs];
     }
 
     /**
      * Retrieves one run
      * @Rest\Get(path="/run/{id}")
+     * @Rest\View(serializerGroups={"from_run"})
      * @SWG\Response(
      *     response=200,
      *     description="Returns one run",
@@ -55,6 +54,6 @@ class ApiController extends AbstractFOSRestController
      */
     public function getRunAction(Run $run)
     {
-        return $this->handleView($this->view($run, 200));
+        return $run;
     }
 }
