@@ -10,7 +10,7 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Knp\Component\Pager\PaginatorInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Request;
 
 class ApiController extends AbstractFOSRestController
@@ -19,12 +19,12 @@ class ApiController extends AbstractFOSRestController
      * Retrieves all runs
      * @Rest\Get(path="/runs")
      * @Rest\View(serializerGroups={"from_run"})
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Returns all runs",
-     *     @SWG\Schema(
+     *     @OA\JsonContent(
      *         type="object",
-     *         @SWG\Property(property="run", type="array", @SWG\Items(ref=@Model(type=Run::class)))
+     *         @OA\Property(property="run", type="array", @OA\Items(ref=@Model(type=Run::class)))
      *     )
      * )
      */
@@ -46,10 +46,10 @@ class ApiController extends AbstractFOSRestController
      * Retrieves one run
      * @Rest\Get(path="/run/{id}")
      * @Rest\View(serializerGroups={"from_run"})
-     * @SWG\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Returns one run",
-     *     @SWG\Schema(ref=@Model(type=Run::class))
+     *     @OA\JsonContent(ref=@Model(type=Run::class))
      * )
      */
     public function getRunAction(Run $run)

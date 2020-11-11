@@ -57,7 +57,7 @@ class User implements UserInterface
     private $city;
 
     /**
-     * @var array
+     * @var string[]
      * @ORM\Column(type="json")
      */
     private $roles = [];
@@ -202,6 +202,7 @@ class User implements UserInterface
     }
 
     /**
+     * @return string
      * @see UserInterface
      */
     public function getSalt()

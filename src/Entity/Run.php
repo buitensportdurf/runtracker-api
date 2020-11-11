@@ -6,9 +6,9 @@ namespace App\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
+use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity
@@ -84,7 +84,6 @@ class Run
     /**
      * @var ?Circuit[]
      * @Groups({"from_run"})
-     * @SWG\Property (type="array", @SWG\Items(type="bla"))
      * @ORM\OneToMany(targetEntity="App\Entity\Circuit", mappedBy="run")
      */
     private $circuits;

@@ -6,7 +6,6 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\Ignore;
 
 /**
  * @ORM\Entity
@@ -95,6 +94,7 @@ class Circuit
 
     /**
      * @var ?integer
+     * @Groups({"from_run"})
      * @ORM\Column(type="integer", nullable=true)
      */
     private $points;
