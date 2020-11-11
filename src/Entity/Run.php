@@ -23,6 +23,7 @@ class Run
 
     /**
      * @var integer
+     * @Groups({"from_run"})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")

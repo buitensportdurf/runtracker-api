@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -13,6 +14,7 @@ class User implements UserInterface
 {
     /**
      * @var integer
+     * @Groups({"from_circuit", "from_run"})
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -21,30 +23,35 @@ class User implements UserInterface
 
     /**
      * @var string
+     * @Groups({"from_circuit", "from_run"})
      * @ORM\Column(type="string", length=180, unique=true)
      */
     private $username;
 
     /**
      * @var ?string
+     * @Groups({"from_circuit", "from_run"})
      * @ORM\Column(type="string", nullable=true)
      */
     private $firstName;
 
     /**
      * @var ?string
+     * @Groups({"from_circuit", "from_run"})
      * @ORM\Column(type="string", nullable=true)
      */
     private $lastName;
 
     /**
      * @var ?string
+     * @Groups({"from_circuit", "from_run"})
      * @ORM\Column(type="string", nullable=true)
      */
     private $gender;
 
     /**
      * @var ?string
+     * @Groups({"from_circuit", "from_run"})
      * @ORM\Column(type="string", nullable=true)
      */
     private $city;

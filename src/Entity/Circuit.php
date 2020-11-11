@@ -16,7 +16,7 @@ class Circuit
 {
     /**
      * @var integer
-     * @Groups({"from_run"})
+     * @Groups({"from_circuit", "from_run"})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
@@ -32,7 +32,7 @@ class Circuit
 
     /**
      * @var User[]
-     * @Groups({"from_circuit"})
+     * @Groups({"from_circuit", "from_run"})
      * @ORM\ManyToMany(targetEntity="App\Entity\User")
      */
     private $users = [];
