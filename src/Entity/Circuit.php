@@ -99,6 +99,13 @@ class Circuit
      */
     private $points;
 
+    /**
+     * @var boolean
+     * @Groups({"from_run"})
+     * @ORM\Column(type="boolean")
+     */
+    private $dummy = false;
+
     public function __toString()
     {
         return $this->rawName;
@@ -319,6 +326,24 @@ class Circuit
     public function setPoints(?int $points): Circuit
     {
         $this->points = $points;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDummy(): bool
+    {
+        return $this->dummy;
+    }
+
+    /**
+     * @param bool $dummy
+     * @return Circuit
+     */
+    public function setDummy(bool $dummy): Circuit
+    {
+        $this->dummy = $dummy;
         return $this;
     }
 }

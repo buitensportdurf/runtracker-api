@@ -55,7 +55,7 @@ class ParseRuns implements StageInterface
 
             $run = [
                 'date' => \DateTime::createFromFormat('d-m-Y', $rawText[0]),
-//                'circuits' => [
+//                'circuits_dummy' => [
 //                    'long' => strlen($rawText[2]) === 1,
 //                    'medium' => strlen($rawText[3]) === 1,
 //                    'short' => strlen($rawText[4]) === 1,
@@ -71,13 +71,13 @@ class ParseRuns implements StageInterface
                 'subscribeId' => $subscribeId,
             ];
             // flip the circuit types if true
-//            $circuits = [];
-//            foreach ($run['circuits'] as $type => $set) {
+//            $circuitsDummy = [];
+//            foreach ($run['circuits_dummy'] as $type => $set) {
 //                if ($set) {
-//                    $circuits[] = $type;
+//                    $circuitsDummy[] = $type;
 //                }
 //            }
-//            $run['circuits'] = $circuits ?: ['none'];
+//            $run['circuits_dummy'] = $circuitsDummy ?: ['none'];
 
             // parse the city
             $city = $rawText[1];

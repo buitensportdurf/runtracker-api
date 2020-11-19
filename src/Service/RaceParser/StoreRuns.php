@@ -70,44 +70,68 @@ class StoreRuns implements StageInterface
                 $this->em->persist($run);
             }
 
-            // Create the circuits and participants
-            $this->logger->info('Start storing circuits and users');
-            foreach ($rawRace['circuits'] as $rawCircuit) {
-                if (!($circuit = $circuitRepo->findOneBy(['rawName' => $rawCircuit['raw_name']]))) {
-                    $circuit = (new Circuit())
-                        ->setRawName($rawCircuit['raw_name'])
-                        ->setDistance($rawCircuit['distance'])
-                        ->setPrice($rawCircuit['price'])
-                        ->setGroupSize($rawCircuit['group_size'])
-                        ->setType($rawCircuit['type'])
-                        ->setDescription('')
-                        ->setMinAge($rawCircuit['min_age'])
-                        ->setMaxAge($rawCircuit['max_age'])
-                        ->setPoints($rawCircuit['points'])
-                        ->setRun($run);
 
-                    $this->em->persist($circuit);
-                    $this->em->flush();
-                }
+            /**
+             * We add the dummy circuits if we have no real circuits parsed and no real circuits attached
+             */
+            // Create the real circuits and participants
+            if (empty($rawRace['circuits'])) {
+                $this->logger->info('Start storing dummy circuits');
+                // Make a dummy for each distance that doesn't exist
+                foreach ($rawRace['distances'] as $distance) {
+                    $rawName = sprintf('dummy_%dkm', $distance);
+                    if (!($circuit = $circuitRepo->findOneBy(['distance' => $distance, 'run' => $run]))) {
+                        $circuit = (new Circuit())
+                            ->setRawName($rawName)
+                            ->setDistance(floatval($distance))
+                            ->setPrice(0)
+                            ->setDummy(true)
+                            ->setRun($run);
 
-                foreach ($rawCircuit['participants'] as $participant) {
-                    // Find the user by first/last name
-                    if (!($user = $userRepo->findOneBy(['firstName' => $participant['first'], 'lastName' => $participant['last']]))) {
-                        $user = (new User())
-                            ->setCity($participant['city'])
-                            ->setFirstName($participant['first'])
-                            ->setLastName($participant['last'])
-                            ->setGender($participant['gender'])
-                            ->setUsername(strtolower($participant['first'] . '_' . $participant['last']))
-                            ->setPassword('x'); // hashed, so impossible to use
-
-                        $this->em->persist($user);
+                        $this->em->persist($circuit);
                         $this->em->flush();
                     }
-                    $circuit->addUser($user);
                 }
+            } else {
+                $this->logger->info('Start storing real circuits and users');
+                foreach ($rawRace['circuits'] as $rawCircuit) {
+                    if (!($circuit = $circuitRepo->findOneBy(['rawName' => $rawCircuit['raw_name']]))) {
+                        $circuit = (new Circuit())
+                            ->setRawName($rawCircuit['raw_name'])
+                            ->setDistance($rawCircuit['distance'])
+                            ->setPrice($rawCircuit['price'])
+                            ->setGroupSize($rawCircuit['group_size'])
+                            ->setType($rawCircuit['type'])
+                            ->setDescription('')
+                            ->setMinAge($rawCircuit['min_age'])
+                            ->setMaxAge($rawCircuit['max_age'])
+                            ->setPoints($rawCircuit['points'])
+                            ->setDummy(false)
+                            ->setRun($run);
 
-                $this->em->persist($circuit);
+                        $this->em->persist($circuit);
+                        $this->em->flush();
+                    }
+
+                    foreach ($rawCircuit['participants'] as $participant) {
+                        // Find the user by first/last name
+                        if (!($user = $userRepo->findOneBy(['firstName' => $participant['first'], 'lastName' => $participant['last']]))) {
+                            $user = (new User())
+                                ->setCity($participant['city'])
+                                ->setFirstName($participant['first'])
+                                ->setLastName($participant['last'])
+                                ->setGender($participant['gender'])
+                                ->setUsername(strtolower($participant['first'] . '_' . $participant['last']))
+                                ->setPassword('x'); // hashed, so impossible to use
+
+                            $this->em->persist($user);
+                            $this->em->flush();
+                        }
+                        $circuit->addUser($user);
+                    }
+
+                    $this->em->persist($circuit);
+                }
             }
         }
         $this->em->flush();

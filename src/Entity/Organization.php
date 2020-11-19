@@ -28,6 +28,7 @@ class Organization
     private $name;
 
     /**
+     * @Groups({"from_run"})
      * @ORM\Column(type="string")
      */
     private $website;

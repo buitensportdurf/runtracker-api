@@ -44,16 +44,19 @@ class ApiController extends AbstractFOSRestController
 
     /**
      * Retrieves one run
-     * @Rest\Get(path="/run/{id}")
+     * @Rest\Get(path="/runs/{id}")
      * @Rest\View(serializerGroups={"from_run"})
      * @OA\Response(
      *     response=200,
      *     description="Returns one run",
-     *     @OA\JsonContent(ref=@Model(type=Run::class))
+     *     @OA\JsonContent(
+     *         type="object",
+     *         @OA\Property(property="run", ref=@Model(type=Run::class) )
+     *     )
      * )
      */
     public function getRunAction(Run $run)
     {
-        return $run;
+        return ['run' => $run];
     }
 }
