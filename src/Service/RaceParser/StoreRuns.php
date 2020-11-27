@@ -64,7 +64,8 @@ class StoreRuns implements StageInterface
                     ->setAge($rawRace['age'])
                     ->setCancelled($rawRace['cancelled'])
                     ->setSubscribe($rawRace['subscriber'] ?? null)
-                    ->setResult($rawRace['result'] ?? null);
+                    ->setResult($rawRace['result'] ?? null)
+                    ->setEnrollId($rawRace['subscribeId']);
 
                 $this->logger->info(sprintf('Storing run %s', $run));
                 $this->em->persist($run);

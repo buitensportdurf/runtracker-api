@@ -89,6 +89,13 @@ class Run
      */
     private $circuits;
 
+    /**
+     * @var ?integer
+     * @Groups({"from_run"})
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $enrollId;
+
     public function __toString()
     {
         return sprintf('%s in %s', $this->date->format('Y-m-d'), $this->city);
@@ -243,5 +250,23 @@ class Run
     public function getCircuits()
     {
         return $this->circuits;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getEnrollId(): ?int
+    {
+        return $this->enrollId;
+    }
+
+    /**
+     * @param int|null $enrollId
+     * @return Run
+     */
+    public function setEnrollId(?int $enrollId): Run
+    {
+        $this->enrollId = $enrollId;
+        return $this;
     }
 }
