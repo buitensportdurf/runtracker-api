@@ -79,14 +79,19 @@ class StoreRuns implements StageInterface
                 $this->logger->info('Start storing dummy circuits');
                 // Make a dummy for each distance that doesn't exist
                 foreach ($rawRace['distances'] as $distance) {
-                    $rawName = sprintf('dummy_%dkm', $distance);
+                    $distance = floatval(str_replace(',', '.', $distance));
+                    $rawName = sprintf('dummy_%.1fkm', $distance);
+                    // We find by distance so that we don't overwrite existing ones
                     if (!($circuit = $circuitRepo->findOneBy(['distance' => $distance, 'run' => $run]))) {
                         $circuit = (new Circuit())
                             ->setRawName($rawName)
-                            ->setDistance(floatval($distance))
+                            ->setDistance($distance)
                             ->setPrice(0)
                             ->setDummy(true)
+                            ->setType('dummy')
                             ->setRun($run);
+
+                        $this->logger->debug(sprintf('Creating dummy %s for run %s', $circuit, $run));
 
                         $this->em->persist($circuit);
                         $this->em->flush();
@@ -108,6 +113,12 @@ class StoreRuns implements StageInterface
                             ->setPoints($rawCircuit['points'])
                             ->setDummy(false)
                             ->setRun($run);
+
+                        // Delete the dummy for this distance if it exists
+                        if (($dummy = $circuitRepo->findOneBy(['distance' => $rawCircuit['distance'], 'run' => $run, 'dummy' => true]))) {
+                            $this->logger->debug(sprintf('Delete dummy %s for run %s', $dummy, $run));
+                            $this->em->remove($dummy);
+                        }
 
                         $this->em->persist($circuit);
                         $this->em->flush();

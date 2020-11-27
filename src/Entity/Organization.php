@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity
@@ -44,6 +45,15 @@ class Organization
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @Groups({"from_run"})
+     * @SerializedName("type")
+     */
+    public function getObjectType(): string
+    {
+        return 'organization';
     }
 
     /**

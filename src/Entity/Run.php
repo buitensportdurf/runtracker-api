@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\Serializer\Annotation\Groups;
 use OpenApi\Annotations as OA;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity
@@ -99,6 +100,15 @@ class Run
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @Groups({"from_run"})
+     * @SerializedName("type")
+     */
+    public function getObjectType(): string
+    {
+        return 'run';
     }
 
     /**

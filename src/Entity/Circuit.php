@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity
@@ -53,6 +54,7 @@ class Circuit
     /**
      * @var ?string
      * @Groups({"from_run"})
+     * @SerializedName("circuitType")
      * @ORM\Column(type="string", nullable=true)
      */
     private $type;
@@ -120,6 +122,15 @@ class Circuit
     }
 
     /**
+     * @Groups({"from_run"})
+     * @SerializedName("type")
+     */
+    public function getObjectType(): string
+    {
+        return 'circuit';
+    }
+
+    /**
      * @return Run
      */
     public function getRun(): Run
@@ -161,7 +172,7 @@ class Circuit
      */
     public function addUser(User $user): Circuit
     {
-        if(!$this->users->contains($user)) {
+        if (!$this->users->contains($user)) {
             $this->users[] = $user;
         }
         return $this;
@@ -298,7 +309,7 @@ class Circuit
      */
     public function getPrice(): ?float
     {
-        return $this->price/100.0; // we store in cents
+        return $this->price / 100.0; // we store in cents
     }
 
     /**
