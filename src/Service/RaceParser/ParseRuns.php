@@ -4,6 +4,7 @@
 namespace App\Service\RaceParser;
 
 
+use App\Entity\Circuit;
 use http\Url;
 use League\Pipeline\StageInterface;
 use Psr\Log\LoggerInterface;
@@ -55,12 +56,12 @@ class ParseRuns implements StageInterface
 
             $run = [
                 'date' => \DateTime::createFromFormat('d-m-Y', $rawText[0]),
-//                'circuits_dummy' => [
-//                    'long' => strlen($rawText[2]) === 1,
-//                    'medium' => strlen($rawText[3]) === 1,
-//                    'short' => strlen($rawText[4]) === 1,
-//                    'youth' => strlen($rawText[5]) === 1,
-//                ],
+                'competitions' => [
+                    Circuit::TYPE_COMPETITION_LONG => strlen($rawText[2]) === 1,
+                    Circuit::TYPE_COMPETITION_MEDIUM => strlen($rawText[3]) === 1,
+                    Circuit::TYPE_COMPETITION_SHORT => strlen($rawText[4]) === 1,
+                    Circuit::TYPE_COMPETITION_YOUTH => strlen($rawText[5]) === 1,
+                ],
                 'qualifier' => strlen($rawText[6]) > 10,
                 'distances' => $distances[0] ?: ['100'],
                 'age' => intval($age[1]),
@@ -71,13 +72,13 @@ class ParseRuns implements StageInterface
                 'subscribeId' => $subscribeId,
             ];
             // flip the circuit types if true
-//            $circuitsDummy = [];
-//            foreach ($run['circuits_dummy'] as $type => $set) {
-//                if ($set) {
-//                    $circuitsDummy[] = $type;
-//                }
-//            }
-//            $run['circuits_dummy'] = $circuitsDummy ?: ['none'];
+            $competitions = [];
+            foreach ($run['competitions'] as $type => $set) {
+                if ($set) {
+                    $competitions[] = $type;
+                }
+            }
+            $run['competitions'] = $competitions ?: [];
 
             // parse the city
             $city = $rawText[1];

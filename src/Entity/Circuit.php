@@ -14,6 +14,11 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  */
 class Circuit
 {
+    const TYPE_COMPETITION_LONG = 'long';
+    const TYPE_COMPETITION_MEDIUM = 'medium';
+    const TYPE_COMPETITION_SHORT = 'short';
+    const TYPE_COMPETITION_YOUTH = 'youth';
+
     /**
      * @var integer
      * @Groups({"from_circuit", "from_run"})
@@ -58,6 +63,13 @@ class Circuit
      * @ORM\Column(type="string", nullable=true)
      */
     private $type;
+
+    /**
+     * @var ?string
+     * @Groups({"from_run"})
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $competitionType;
 
     /**
      * @var ?integer
@@ -229,6 +241,24 @@ class Circuit
     public function setType(?string $type): Circuit
     {
         $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCompetitionType(): ?string
+    {
+        return $this->competitionType;
+    }
+
+    /**
+     * @param string|null $competitionType
+     * @return Circuit
+     */
+    public function setCompetitionType(?string $competitionType): Circuit
+    {
+        $this->competitionType = $competitionType;
         return $this;
     }
 

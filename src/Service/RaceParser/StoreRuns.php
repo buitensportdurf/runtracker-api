@@ -75,9 +75,9 @@ class StoreRuns implements StageInterface
             /**
              * We add the dummy circuits if we have no real circuits parsed and no real circuits attached
              */
-            // Create the real circuits and participants
             if (empty($rawRace['circuits'])) {
                 $this->logger->info('Start storing dummy circuits');
+                $competitions = $rawRace['competitions'];
                 // Make a dummy for each distance that doesn't exist
                 foreach ($rawRace['distances'] as $distance) {
                     $distance = floatval(str_replace(',', '.', $distance));
@@ -90,6 +90,7 @@ class StoreRuns implements StageInterface
                             ->setPrice(0)
                             ->setDummy(true)
                             ->setType('dummy')
+                            ->setCompetitionType(array_pop($competitions))
                             ->setRun($run);
 
                         $this->logger->debug(sprintf('Creating dummy %s for run %s', $circuit, $run));
@@ -99,6 +100,7 @@ class StoreRuns implements StageInterface
                     }
                 }
             } else {
+                // Create the real circuits and participants
                 $this->logger->info('Start storing real circuits and users');
                 foreach ($rawRace['circuits'] as $rawCircuit) {
                     if (!($circuit = $circuitRepo->findOneBy(['rawName' => $rawCircuit['raw_name']]))) {
