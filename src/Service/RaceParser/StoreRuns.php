@@ -132,7 +132,12 @@ class StoreRuns implements StageInterface
 
                     foreach ($rawCircuit['participants'] as $participant) {
                         // Find the user by first/last name
-                        if (!($user = $userRepo->findOneBy(['firstName' => $participant['first'], 'lastName' => $participant['last']]))) {
+                        if (!($user = $userRepo->findOneBy([
+                            'firstName' => $participant['first'],
+                            'middleName' => $participant['middle'],
+                            'lastName' => $participant['last'],
+                            'city' => $participant['city'],
+                        ]))) {
                             $user = (new User())
                                 ->setCity($participant['city'])
                                 ->setFirstName($participant['first'])

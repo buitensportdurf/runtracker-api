@@ -43,6 +43,20 @@ class Circuit
     private $users = [];
 
     /**
+     * @var integer
+     * @Groups({"from_run"})
+     * @ORM\Column(type="integer")
+     */
+    private $userCount = 0;
+
+    /**
+     * @var integer
+     * @Groups({"from_run"})
+     * @ORM\Column(type="integer")
+     */
+    private $userCapacity = -1;
+
+    /**
      * @var string
      * @Groups({"from_run"})
      * @ORM\Column(type="string")
@@ -120,20 +134,6 @@ class Circuit
      */
     private $dummy = false;
 
-    /**
-     * @var integer
-     * @Groups({"from_run"})
-     * @ORM\Column(type="integer")
-     */
-    private $userCount = 0;
-
-    /**
-     * @var integer
-     * @Groups({"from_run"})
-     * @ORM\Column(type="integer")
-     */
-    private $userCapacity = -1;
-
     public function __toString()
     {
         return $this->rawName;
@@ -201,6 +201,42 @@ class Circuit
         if (!$this->users->contains($user)) {
             $this->users[] = $user;
         }
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserCount(): int
+    {
+        return $this->userCount;
+    }
+
+    /**
+     * @param int $userCount
+     * @return Circuit
+     */
+    public function setUserCount(int $userCount): Circuit
+    {
+        $this->userCount = $userCount;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserCapacity(): int
+    {
+        return $this->userCapacity;
+    }
+
+    /**
+     * @param int $userCapacity
+     * @return Circuit
+     */
+    public function setUserCapacity(int $userCapacity): Circuit
+    {
+        $this->userCapacity = $userCapacity;
         return $this;
     }
 
@@ -399,42 +435,6 @@ class Circuit
     public function setDummy(bool $dummy): Circuit
     {
         $this->dummy = $dummy;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getUserCount(): int
-    {
-        return $this->userCount;
-    }
-
-    /**
-     * @param int $userCount
-     * @return Circuit
-     */
-    public function setUserCount(int $userCount): Circuit
-    {
-        $this->userCount = $userCount;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getUserCapacity(): int
-    {
-        return $this->userCapacity;
-    }
-
-    /**
-     * @param int $userCapacity
-     * @return Circuit
-     */
-    public function setUserCapacity(int $userCapacity): Circuit
-    {
-        $this->userCapacity = $userCapacity;
         return $this;
     }
 }

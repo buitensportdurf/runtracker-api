@@ -41,6 +41,13 @@ class User implements UserInterface
      * @Groups({"from_circuit", "from_run"})
      * @ORM\Column(type="string", nullable=true)
      */
+    private $middleName;
+
+    /**
+     * @var ?string
+     * @Groups({"from_circuit", "from_run"})
+     * @ORM\Column(type="string", nullable=true)
+     */
     private $lastName;
 
     /**
@@ -95,7 +102,7 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->username;
+        return (string)$this->username;
     }
 
     public function setUsername(string $username): self
@@ -120,6 +127,24 @@ class User implements UserInterface
     public function setFirstName(?string $firstName): User
     {
         $this->firstName = $firstName;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMiddleName(): ?string
+    {
+        return $this->middleName;
+    }
+
+    /**
+     * @param string|null $middleName
+     * @return User
+     */
+    public function setMiddleName(?string $middleName): User
+    {
+        $this->middleName = $middleName;
         return $this;
     }
 
@@ -201,7 +226,7 @@ class User implements UserInterface
      */
     public function getPassword(): string
     {
-        return (string) $this->password;
+        return (string)$this->password;
     }
 
     public function setPassword(string $password): self

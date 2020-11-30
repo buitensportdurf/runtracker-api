@@ -155,9 +155,12 @@ class ParseParticipants implements StageInterface
                 $teamName = array_shift($rawText);
             }
 
+            $middleLastName = $this->splitMiddleLast($this->sanitize($rawText[0]));
+
             return [
                 'first' => $this->sanitize($rawText[1]),
-                'last' => $this->sanitize($rawText[0]),
+                'middle' => $middleLastName['middle'],
+                'last' => $middleLastName['last'],
                 'city' => $this->sanitize($rawText[2]),
                 'gender' => $this->sanitize($rawText[3]),
             ];
@@ -168,6 +171,45 @@ class ParseParticipants implements StageInterface
 
     private function sanitize($text)
     {
-        return preg_replace('/\PL/u', '', $text);
+        return trim(preg_replace('/[^\pL ]/u', '', $text));
+    }
+
+    private function splitMiddleLast($name)
+    {
+        $middleParts = ['van', 'de', 'den', 'der'];
+        $segments = explode(' ', $name);
+        $middleNames = [];
+        // First check if the name start with one of the middle parts
+        foreach ($segments as $segment) {
+            if (in_array(strtolower($segment), $middleParts)) {
+                $middleNames[] = $segment;
+            } else {
+                if (!empty($middleNames)) {
+                    return [
+                        'middle' => implode(' ', $middleNames),
+                        'last' => implode(' ', array_diff($segments, $middleNames)),
+                    ];
+                }
+                break;
+            }
+        }
+        // Reverse and check from the end
+        foreach (array_reverse($segments) as $segment) {
+            if (in_array(strtolower($segment), $middleParts)) {
+                $middleNames[] = $segment;
+            } else {
+                if (!empty($middleNames)) {
+                    return [
+                        'middle' => implode(' ', array_reverse($middleNames)),
+                        'last' => implode(' ', array_diff($segments, $middleNames)),
+                    ];
+                }
+                break;
+            }
+        }
+        return [
+            'middle' => null,
+            'last' => $name,
+        ];
     }
 }
