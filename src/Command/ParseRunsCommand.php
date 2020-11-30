@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ParseRunsCommand extends Command
 {
-    protected static $defaultName = 'app:main';
+    protected static $defaultName = 'update';
 
     /**
      * @var RunParserService

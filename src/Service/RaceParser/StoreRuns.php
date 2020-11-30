@@ -114,6 +114,7 @@ class StoreRuns implements StageInterface
                             ->setMinAge($rawCircuit['min_age'])
                             ->setMaxAge($rawCircuit['max_age'])
                             ->setPoints($rawCircuit['points'])
+                            ->setUserCapacity($rawCircuit['participants_max'])
                             ->setDummy(false)
                             ->setRun($run);
 
@@ -122,10 +123,12 @@ class StoreRuns implements StageInterface
                             $this->logger->debug(sprintf('Delete dummy %s for run %s', $dummy, $run));
                             $this->em->remove($dummy);
                         }
-
-                        $this->em->persist($circuit);
-                        $this->em->flush();
                     }
+                    // Updatable all values
+                    $circuit->setUserCount($rawCircuit['participants_current']);
+
+                    $this->em->persist($circuit);
+                    $this->em->flush();
 
                     foreach ($rawCircuit['participants'] as $participant) {
                         // Find the user by first/last name
