@@ -5,7 +5,7 @@ namespace App\Service\RaceParser;
 
 
 use App\Entity\Circuit;
-use http\Url;
+use DateTime;
 use League\Pipeline\StageInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -49,13 +49,23 @@ class ParseRuns implements StageInterface
             // Try to parse the UVP subscribe ID which might not be gettable if not announced
             $url = $node->filter('td.inschrijflink a');
             $subscribeId = -1;
+            $openDate = null;
             if ($url->count() > 0) {
                 preg_match('/\/uvponlineF\/inschrijven\/(\d+)/', $url->attr('href'), $idMatches);
+                preg_match('/(\d{2}-\d{2}-\d{4})(\d{2}:\d{2})?/', $url->text(), $openDateMatches);
                 $subscribeId = intval($idMatches[1]);
+
+                // Parse the opening date
+                if (count($openDateMatches) == 2) {
+                    $openDate = DateTime::createFromFormat('d-m-Y', $openDateMatches[1]);
+                    $openDate->setTime(12, 0); // If no time is specified, assume it opens at 12
+                } elseif (count($openDateMatches) == 3) {
+                    $openDate = DateTime::createFromFormat('d-m-YH:s', $openDateMatches[1] . $openDateMatches[2]);
+                }
             }
 
             $run = [
-                'date' => \DateTime::createFromFormat('d-m-Y', $rawText[0]),
+                'date' => DateTime::createFromFormat('d-m-Y', $rawText[0]),
                 'competitions' => [
                     Circuit::TYPE_COMPETITION_LONG => strlen($rawText[2]) === 1,
                     Circuit::TYPE_COMPETITION_MEDIUM => strlen($rawText[3]) === 1,
@@ -70,6 +80,7 @@ class ParseRuns implements StageInterface
                     'url' => $node->filter('td#wedstrijdlink a')->attr('href'),
                 ],
                 'subscribeId' => $subscribeId,
+                'openDate' => $openDate,
             ];
             // flip the circuit types if true
             $competitions = [];

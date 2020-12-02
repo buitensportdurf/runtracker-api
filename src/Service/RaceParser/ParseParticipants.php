@@ -4,6 +4,7 @@
 namespace App\Service\RaceParser;
 
 
+use App\Entity\Circuit;
 use League\Pipeline\StageInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -117,10 +118,31 @@ class ParseParticipants implements StageInterface
                 $circuit['type'] = 'unknown';
             }
 
+            // Get the competition type
+            $competitionTypes = [
+                'lsr' => Circuit::TYPE_COMPETITION_LONG,
+                'msr' => Circuit::TYPE_COMPETITION_MEDIUM,
+                'ksr' => Circuit::TYPE_COMPETITION_SHORT,
+                'jsr' => Circuit::TYPE_COMPETITION_YOUTH,
+            ];
+            $circuit['competition_type'] = null;
+            foreach ($competitionTypes as $name => $type) {
+                if (strstr($description, $name)) {
+                    $circuit['competition_type'] = $type;
+                    break;
+                }
+            }
+
+            // Get points
+            $circuit['points'] = 0;
+            $pointsField = $node->filter('span.kwalpunten_step1');
+            if ($pointsField->count() > 0) {
+                $circuit['points'] = intval(preg_replace('/[^0-9]/', '', $pointsField->text()));
+            }
+
             // Todo: parse
             $circuit['min_age'] = 0;
             $circuit['max_age'] = 100;
-            $circuit['points'] = 0;
 
             return $circuit;
         });

@@ -113,7 +113,6 @@ class StoreRuns implements StageInterface
                             ->setDescription('')
                             ->setMinAge($rawCircuit['min_age'])
                             ->setMaxAge($rawCircuit['max_age'])
-                            ->setPoints($rawCircuit['points'])
                             ->setUserCapacity($rawCircuit['participants_max'])
                             ->setDummy(false)
                             ->setRun($run);
@@ -124,26 +123,28 @@ class StoreRuns implements StageInterface
                             $this->em->remove($dummy);
                         }
                     }
-                    // Updatable all values
-                    $circuit->setUserCount($rawCircuit['participants_current']);
+                    // Updatable values
+                    $circuit->setUserCount($rawCircuit['participants_current'])
+                        ->setPoints($rawCircuit['points'])
+                        ->setCompetitionType($rawCircuit['competition_type']);
 
                     $this->em->persist($circuit);
                     $this->em->flush();
 
                     foreach ($rawCircuit['participants'] as $participant) {
+                        $username = strtolower($participant['first'] . ' ' . $participant['middle'] . ' ' . $participant['last']);
+                        $username = str_replace(' ', '_', $username);
                         // Find the user by first/last name
                         if (!($user = $userRepo->findOneBy([
-                            'firstName' => $participant['first'],
-                            'middleName' => $participant['middle'],
-                            'lastName' => $participant['last'],
-                            'city' => $participant['city'],
+                            'username' => $username,
                         ]))) {
                             $user = (new User())
                                 ->setCity($participant['city'])
                                 ->setFirstName($participant['first'])
+                                ->setMiddleName($participant['middle'])
                                 ->setLastName($participant['last'])
                                 ->setGender($participant['gender'])
-                                ->setUsername(strtolower($participant['first'] . '_' . $participant['last']))
+                                ->setUsername($username)
                                 ->setPassword('x'); // hashed, so impossible to use
 
                             $this->em->persist($user);
