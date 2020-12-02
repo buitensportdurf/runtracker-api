@@ -96,6 +96,13 @@ class Run
      */
     private $enrollId;
 
+    /**
+     * @var ?DateTime
+     * @Groups({"from_run"})
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $opensAt;
+
     public function __toString()
     {
         return sprintf('%s in %s', $this->date->format('Y-m-d'), $this->city);
@@ -267,6 +274,24 @@ class Run
     public function setEnrollId(?int $enrollId): Run
     {
         $this->enrollId = $enrollId;
+        return $this;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getOpensAt(): ?DateTime
+    {
+        return $this->opensAt;
+    }
+
+    /**
+     * @param DateTime|null $opensAt
+     * @return Run
+     */
+    public function setOpensAt(?DateTime $opensAt): Run
+    {
+        $this->opensAt = $opensAt;
         return $this;
     }
 }

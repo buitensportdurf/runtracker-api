@@ -64,13 +64,16 @@ class StoreRuns implements StageInterface
                     ->setAge($rawRace['age'])
                     ->setCancelled($rawRace['cancelled'])
                     ->setSubscribe($rawRace['subscriber'] ?? null)
-                    ->setResult($rawRace['result'] ?? null)
-                    ->setEnrollId($rawRace['subscribeId']);
+                    ->setResult($rawRace['result'] ?? null);
 
                 $this->logger->info(sprintf('Storing run %s', $run));
-                $this->em->persist($run);
             }
+            // Updatable values
+            $run->setOpensAt($rawRace['openDate'])
+                ->setEnrollId($rawRace['subscribeId']);
 
+            $this->em->persist($run);
+            $this->em->flush(); // Flush to make sure we don't get duplicate entries
 
             /**
              * We add the dummy circuits if we have no real circuits parsed and no real circuits attached
