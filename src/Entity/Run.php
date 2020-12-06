@@ -4,7 +4,12 @@
 namespace App\Entity;
 
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Symfony\Component\Serializer\Annotation\Groups;
+use OpenApi\Annotations as OA;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity
@@ -18,6 +23,8 @@ class Run
     public const CIRCUIT_YOUTH = 'youth';
 
     /**
+     * @var integer
+     * @Groups({"from_run"})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
@@ -25,44 +32,81 @@ class Run
     private $id;
 
     /**
+     * @var DateTime
+     * @Groups({"from_run"})
      * @ORM\Column(type="date")
      */
     private $date;
 
     /**
+     * @var string
+     * @Groups({"from_run"})
      * @ORM\Column(type="string")
      */
     private $city;
 
     /**
-     * @ORM\Column(type="simple_array")
-     */
-    private $circuits = [];
-
-    /**
-     * @ORM\Column(type="simple_array")
-     */
-    private $distances = [];
-
-    /**
+     * @var integer
+     * @Groups({"from_run"})
      * @ORM\Column(type="integer")
      */
     private $age = 0;
 
     /**
-     * @ORM\Column(type="string")
+     * @var Organization
+     * @Groups({"from_run"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization")
      */
-    private $organizer;
+    private $organization;
 
     /**
+     * @var boolean
+     * @Groups({"from_run"})
+     * @ORM\Column(type="boolean")
+     */
+    private $cancelled = false;
+
+    /**
+     * subscribe url
+     * @var string
+     * @Groups({"from_run"})
      * @ORM\Column(type="string", nullable=true)
      */
     private $subscribe;
 
     /**
+     * results url
+     * @var string
+     * @Groups({"from_run"})
      * @ORM\Column(type="string", nullable=true)
      */
     private $result;
+
+    /**
+     * @var ?Circuit[]
+     * @Groups({"from_run"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Circuit", mappedBy="run")
+     */
+    private $circuits;
+
+    /**
+     * @var ?integer
+     * @Groups({"from_run"})
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $enrollId;
+
+    /**
+     * @var ?DateTime
+     * @Groups({"from_run"})
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $opensAt;
+
+    public function __toString()
+    {
+        return sprintf('%s in %s', $this->date->format('Y-m-d'), $this->city);
+    }
 
     /**
      * @return mixed
@@ -70,6 +114,15 @@ class Run
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @Groups({"from_run"})
+     * @SerializedName("type")
+     */
+    public function getObjectType(): string
+    {
+        return 'run';
     }
 
     /**
@@ -111,42 +164,6 @@ class Run
     /**
      * @return mixed
      */
-    public function getCircuits()
-    {
-        return $this->circuits;
-    }
-
-    /**
-     * @param mixed $circuits
-     * @return Run
-     */
-    public function setCircuits($circuits)
-    {
-        $this->circuits = $circuits;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDistances()
-    {
-        return $this->distances;
-    }
-
-    /**
-     * @param mixed $distances
-     * @return Run
-     */
-    public function setDistances($distances)
-    {
-        $this->distances = $distances;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getAge()
     {
         return $this->age;
@@ -163,20 +180,38 @@ class Run
     }
 
     /**
-     * @return mixed
+     * @return Organization
      */
-    public function getOrganizer()
+    public function getOrganization()
     {
-        return $this->organizer;
+        return $this->organization;
     }
 
     /**
-     * @param mixed $organizer
+     * @param Organization $organization
      * @return Run
      */
-    public function setOrganizer($organizer)
+    public function setOrganization(Organization $organization)
     {
-        $this->organizer = $organizer;
+        $this->organization = $organization;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCancelled(): bool
+    {
+        return $this->cancelled;
+    }
+
+    /**
+     * @param bool $cancelled
+     * @return Run
+     */
+    public function setCancelled(bool $cancelled): Run
+    {
+        $this->cancelled = $cancelled;
         return $this;
     }
 
@@ -213,6 +248,50 @@ class Run
     public function setResult($result)
     {
         $this->result = $result;
+        return $this;
+    }
+
+    /**
+     * @return Circuit[]|null
+     */
+    public function getCircuits()
+    {
+        return $this->circuits;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getEnrollId(): ?int
+    {
+        return $this->enrollId;
+    }
+
+    /**
+     * @param int|null $enrollId
+     * @return Run
+     */
+    public function setEnrollId(?int $enrollId): Run
+    {
+        $this->enrollId = $enrollId;
+        return $this;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getOpensAt(): ?DateTime
+    {
+        return $this->opensAt;
+    }
+
+    /**
+     * @param DateTime|null $opensAt
+     * @return Run
+     */
+    public function setOpensAt(?DateTime $opensAt): Run
+    {
+        $this->opensAt = $opensAt;
         return $this;
     }
 }

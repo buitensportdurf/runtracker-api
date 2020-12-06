@@ -90,9 +90,6 @@
     "egulias/email-validator": {
         "version": "2.1.18"
     },
-    "exsyst/swagger": {
-        "version": "v0.4.1"
-    },
     "friendsofsymfony/rest-bundle": {
         "version": "2.2",
         "recipe": {
@@ -382,9 +379,6 @@
     },
     "symfony/options-resolver": {
         "version": "v5.1.3"
-    },
-    "symfony/orm-pack": {
-        "version": "v2.0.0"
     },
     "symfony/phpunit-bridge": {
         "version": "4.3",

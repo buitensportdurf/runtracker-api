@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -12,6 +14,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface
 {
     /**
+     * @var integer
+     * @Groups({"from_circuit", "from_run"})
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -19,11 +23,49 @@ class User implements UserInterface
     private $id;
 
     /**
+     * @var string
+     * @Groups({"from_circuit", "from_run"})
      * @ORM\Column(type="string", length=180, unique=true)
      */
     private $username;
 
     /**
+     * @var ?string
+     * @Groups({"from_circuit", "from_run"})
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $firstName;
+
+    /**
+     * @var ?string
+     * @Groups({"from_circuit", "from_run"})
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $middleName;
+
+    /**
+     * @var ?string
+     * @Groups({"from_circuit", "from_run"})
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $lastName;
+
+    /**
+     * @var ?string
+     * @Groups({"from_circuit", "from_run"})
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $gender;
+
+    /**
+     * @var ?string
+     * @Groups({"from_circuit", "from_run"})
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $city;
+
+    /**
+     * @var string[]
      * @ORM\Column(type="json")
      */
     private $roles = [];
@@ -34,9 +76,23 @@ class User implements UserInterface
      */
     private $password;
 
+    public function __toString()
+    {
+        return $this->firstName . ' ' . $this->lastName;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * @Groups({"from_run"})
+     * @SerializedName("type")
+     */
+    public function getObjectType(): string
+    {
+        return 'user';
     }
 
     /**
@@ -46,13 +102,103 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->username;
+        return (string)$this->username;
     }
 
     public function setUsername(string $username): self
     {
         $this->username = $username;
 
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    /**
+     * @param string|null $firstName
+     * @return User
+     */
+    public function setFirstName(?string $firstName): User
+    {
+        $this->firstName = $firstName;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMiddleName(): ?string
+    {
+        return $this->middleName;
+    }
+
+    /**
+     * @param string|null $middleName
+     * @return User
+     */
+    public function setMiddleName(?string $middleName): User
+    {
+        $this->middleName = $middleName;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    /**
+     * @param string|null $lastName
+     * @return User
+     */
+    public function setLastName(?string $lastName): User
+    {
+        $this->lastName = $lastName;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    /**
+     * @param string|null $gender
+     * @return User
+     */
+    public function setGender(?string $gender): User
+    {
+        $this->gender = $gender;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    /**
+     * @param string|null $city
+     * @return User
+     */
+    public function setCity(?string $city): User
+    {
+        $this->city = $city;
         return $this;
     }
 
@@ -80,7 +226,7 @@ class User implements UserInterface
      */
     public function getPassword(): string
     {
-        return (string) $this->password;
+        return (string)$this->password;
     }
 
     public function setPassword(string $password): self
@@ -91,6 +237,7 @@ class User implements UserInterface
     }
 
     /**
+     * @return string
      * @see UserInterface
      */
     public function getSalt()

@@ -13,7 +13,7 @@
         "friendsofsymfony/rest-bundle": "^3.0",
         "knplabs/knp-paginator-bundle": "^5.3",
         "league/pipeline": "^1.0",
-        "nelmio/api-doc-bundle": "^3.6",
+        "nelmio/api-doc-bundle": "^4.0",
         "nelmio/cors-bundle": "^2.1",
         "phpdocumentor/reflection-docblock": "^5.2",
         "sensio/framework-extra-bundle": "^5.5",

@@ -24,7 +24,7 @@ class HomeController extends AbstractController
      */
     public function parse(RunParserService $rp)
     {
-        dump($rp->updateRuns());
+        $rp->updateRuns();
         return $this->render('base.html.twig');
     }
 
