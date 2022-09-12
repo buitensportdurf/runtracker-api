@@ -65,7 +65,7 @@ class ParseParticipants implements StageInterface
         return $crawler->each(function (Crawler $node) {
             $link = $node->filter('span.cat_beschrijving_step1 a');
             return [
-                'participants' => $this->getParticipants($link->attr('href'))
+                'participants' => $this->getParticipants($link->attr('href')),
             ];
         });
     }
@@ -83,10 +83,15 @@ class ParseParticipants implements StageInterface
             $fullness = $node->filter('span.stat_box_values td')->each(function (Crawler $node) {
                 return $node->text();
             });
-            $circuit['participants_current'] = intval($fullness[0]);
-            $circuit['participants_max'] = intval($fullness[2]);
+            if (count($fullness) < 3) {
+                $circuit['participants_current'] = -1;
+                $circuit['participants_max'] = -1;
+            } else {
+                $circuit['participants_current'] = intval($fullness[0]);
+                $circuit['participants_max'] = intval($fullness[2]);
+            }
 
-            $description = substr(strtolower($node->filter('span.cat_beschrijving_step1')->text()), 2);
+            $description = substr(strtolower($node->filter('div.cat_beschrijving_step1')->text()), 2);
             $circuit['raw_name'] = $description;
             // Get the distance
             preg_match('/([\d]) ?(?:km)/', $description, $distances);

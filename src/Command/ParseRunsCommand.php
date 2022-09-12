@@ -39,8 +39,7 @@ class ParseRunsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $runs = $this->rp->updateRuns();
-        dump($runs);
+        $this->rp->updateRuns();
 
         return 0;
     }

@@ -50,8 +50,8 @@ class ParseRuns implements StageInterface
 
     public function __invoke($payload)
     {
-        $years = [2022];
-        foreach ($years as $year) {
+        $allRuns = [];
+        foreach ($payload as $year) {
             $url = $this->url($year);
 
             $this->logger->info(sprintf('Runs [%s] Start parsing runs overview', $url));
@@ -147,9 +147,12 @@ class ParseRuns implements StageInterface
 
                 return $run;
             });
-            array_filter($runs);
+
+            $runs = array_filter($runs);
             $this->logger->info(sprintf('Runs [%s] Found %d runs', $url, count($runs)));
+
+            $allRuns = array_merge($allRuns, $runs);
         }
-        return $runs;
+        return $allRuns;
     }
 }

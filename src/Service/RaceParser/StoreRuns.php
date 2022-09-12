@@ -15,24 +15,16 @@ use Psr\Log\LoggerInterface;
 class StoreRuns implements StageInterface
 {
     /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * StoreRaces constructor.
+     *
      * @param EntityManagerInterface $em
-     * @param LoggerInterface $logger
+     * @param LoggerInterface        $logger
      */
-    public function __construct(EntityManagerInterface $em, LoggerInterface $logger)
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly LoggerInterface        $logger,
+    )
     {
-        $this->em = $em;
-        $this->logger = $logger;
     }
 
     public function __invoke($rawRaces)
@@ -55,22 +47,23 @@ class StoreRuns implements StageInterface
             }
 
             // First try to find existing run
-            if (!($run = $runRepo->findOneBy(['date' => $rawRace['date'], 'city' => $rawRace['city']]))) {
+            $run = $runRepo->findOneBy(['date' => $rawRace['date'], 'city' => $rawRace['city']]);
+            if (!$run) {
                 // Create the run
                 $run = (new Run())
                     ->setDate($rawRace['date'])
                     ->setCity($rawRace['city'])
                     ->setOrganization($organization)
-                    ->setAge($rawRace['age'])
-                    ->setCancelled($rawRace['cancelled'])
-                    ->setSubscribe($rawRace['subscriber'] ?? null)
-                    ->setResult($rawRace['result'] ?? null);
+                    ->setAge($rawRace['age']);
 
-                $this->logger->info(sprintf('Storing run %s', $run));
+                $this->logger->info(sprintf('Creating new run %s', $run));
             }
             // Updatable values
             $run->setOpensAt($rawRace['openDate'])
-                ->setEnrollId($rawRace['subscribeId']);
+                ->setEnrollId($rawRace['subscribeId'])
+                ->setCancelled($rawRace['cancelled'])
+                ->setSubscribe($rawRace['subscriber'] ?? null)
+                ->setResult($rawRace['result'] ?? null);
 
             $this->em->persist($run);
             $this->em->flush(); // Flush to make sure we don't get duplicate entries
@@ -86,7 +79,8 @@ class StoreRuns implements StageInterface
                     $distance = floatval(str_replace(',', '.', $distance));
                     $rawName = sprintf('dummy_%.1fkm', $distance);
                     // We find by distance so that we don't overwrite existing ones
-                    if (!($circuit = $circuitRepo->findOneBy(['distance' => $distance, 'run' => $run]))) {
+                    $circuit = $circuitRepo->findOneBy(['distance' => $distance, 'run' => $run]);
+                    if (!$circuit) {
                         $circuit = (new Circuit())
                             ->setRawName($rawName)
                             ->setDistance($distance)
@@ -106,7 +100,8 @@ class StoreRuns implements StageInterface
                 // Create the real circuits and participants
                 $this->logger->info('Start storing real circuits and users');
                 foreach ($rawRace['circuits'] as $rawCircuit) {
-                    if (!($circuit = $circuitRepo->findOneBy(['rawName' => $rawCircuit['raw_name']]))) {
+                    $circuit = $circuitRepo->findOneBy(['rawName' => $rawCircuit['raw_name']]);
+                    if (!$circuit) {
                         $circuit = (new Circuit())
                             ->setRawName($rawCircuit['raw_name'])
                             ->setDistance($rawCircuit['distance'])
@@ -121,7 +116,8 @@ class StoreRuns implements StageInterface
                             ->setRun($run);
 
                         // Delete the dummy for this distance if it exists
-                        if (($dummy = $circuitRepo->findOneBy(['distance' => $rawCircuit['distance'], 'run' => $run, 'dummy' => true]))) {
+                        $dummy = $circuitRepo->findOneBy(['distance' => $rawCircuit['distance'], 'run' => $run, 'dummy' => true]);
+                        if ($dummy) {
                             $this->logger->debug(sprintf('Delete dummy %s for run %s', $dummy, $run));
                             $this->em->remove($dummy);
                         }
@@ -135,12 +131,14 @@ class StoreRuns implements StageInterface
                     $this->em->flush();
 
                     foreach ($rawCircuit['participants'] as $participant) {
-                        $username = strtolower($participant['first'] . ' ' . $participant['middle'] . ' ' . $participant['last']);
+                        $username = strtolower(sprintf(
+                            '%s %s %s',
+                            $participant['first'], $participant['middle'], $participant['last']
+                        ));
                         $username = str_replace(' ', '_', $username);
                         // Find the user by first/last name
-                        if (!($user = $userRepo->findOneBy([
-                            'username' => $username,
-                        ]))) {
+                        $user = $userRepo->findOneBy(['username' => $username]);
+                        if (!$user) {
                             $user = (new User())
                                 ->setCity($participant['city'])
                                 ->setFirstName($participant['first'])

@@ -17,20 +17,20 @@ class RunParserService
 
     public function __construct(
         ParseRuns         $gr,
-        StoreRuns         $sr,
         ParseParticipants $pp,
+        StoreRuns         $sr,
     )
     {
         $builder = new PipelineBuilder();
         $this->pipeline = $builder
             ->add($gr)
-//            ->add($pp)
-//            ->add($sr)
+            ->add($pp)
+            ->add($sr)
             ->build();
     }
 
     public function updateRuns()
     {
-        return $this->pipeline->process(null);
+        return $this->pipeline->process([2019, 2020, 2021, 2022, 2023]);
     }
 }
