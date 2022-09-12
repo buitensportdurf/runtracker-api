@@ -64,10 +64,10 @@ class ParseRuns implements StageInterface
                 });
 
                 // Replace estafette by 100km
-                $rawDistances = str_replace('Estafette suvivalrun', '100 km', $rawText[self::C_DISTANCE]);
+                $rawDistances = str_replace(['Estaffete', 'Estafette'], ['100 km', '100 km'], $rawText[self::C_DISTANCE]);
                 // Get all distances
                 // Make sure there's no garbage (such as "ook op 9 en 10 juli") in the distance field
-                if(!str_contains($rawDistances, 'km')) {
+                if (!str_contains($rawDistances, 'km')) {
                     $this->logger->error(sprintf('Run has no proper distance defined: "%s"', $rawDistances));
                     return null;
                 }
@@ -131,7 +131,7 @@ class ParseRuns implements StageInterface
                 }
                 $city = str_replace(['(za)', '(zo)'], ['', ''], $city);
                 // Remove championships, maybe parse later?
-                $city = str_replace([' ONK LSR', ' ONK MSR', ' ONK KSR', ' ONK JSR', ' BK'], ['', '', '', '', ''], $city);
+                $city = str_replace(['ONK LSR', 'ONK MSR', 'ONK KSR', 'ONK JSR', 'ONK Koppel', 'NSK', 'BK'], ['', '', '', '', '', '', ''], $city);
                 $run['city'] = trim($city);
 
                 // parse the subscribe url
