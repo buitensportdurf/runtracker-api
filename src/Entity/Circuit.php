@@ -18,6 +18,7 @@ class Circuit
     const TYPE_COMPETITION_MEDIUM = 'medium';
     const TYPE_COMPETITION_SHORT = 'short';
     const TYPE_COMPETITION_YOUTH = 'youth';
+    const TYPE_COMPETITION_BASE = 'base';
 
     /**
      * @var integer

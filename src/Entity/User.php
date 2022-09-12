@@ -102,7 +102,7 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string)$this->username;
+        return $this->username;
     }
 
     public function setUsername(string $username): self
@@ -226,7 +226,7 @@ class User implements UserInterface
      */
     public function getPassword(): string
     {
-        return (string)$this->password;
+        return $this->password;
     }
 
     public function setPassword(string $password): self
@@ -252,5 +252,10 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->username;
     }
 }

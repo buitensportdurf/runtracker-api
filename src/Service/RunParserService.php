@@ -8,20 +8,25 @@ use App\Service\RaceParser\ParseParticipants;
 use App\Service\RaceParser\ParseRuns;
 use App\Service\RaceParser\StoreRuns;
 use League\Pipeline\Pipeline;
+use League\Pipeline\PipelineBuilder;
+use League\Pipeline\PipelineInterface;
 
 class RunParserService
 {
-    /**
-     * @var Pipeline
-     */
-    private $pipeline;
+    private PipelineInterface $pipeline;
 
-    public function __construct(ParseRuns $gr, StoreRuns $sr, ParseParticipants $pp)
+    public function __construct(
+        ParseRuns         $gr,
+        StoreRuns         $sr,
+        ParseParticipants $pp,
+    )
     {
-        $this->pipeline = (new Pipeline())
-            ->pipe($gr)
-            ->pipe($pp)
-            ->pipe($sr);
+        $builder = new PipelineBuilder();
+        $this->pipeline = $builder
+            ->add($gr)
+//            ->add($pp)
+//            ->add($sr)
+            ->build();
     }
 
     public function updateRuns()
