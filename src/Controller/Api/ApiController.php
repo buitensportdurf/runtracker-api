@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 
 
 use App\Entity\Run;
+use App\Repository\RunRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -19,27 +20,52 @@ class ApiController extends AbstractFOSRestController
      * Retrieves all runs
      * @Rest\Get(path="/runs")
      * @Rest\View(serializerGroups={"from_run"})
+     * @OA\Parameter(
+     *     name="year",
+     *     in="query",
+     *     description="Only get a specific year",
+     *     required=false,
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="Get single page",
+     *     required=false,
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *     name="pageSize",
+     *     in="query",
+     *     description="Set page size, default is 100",
+     *     required=false,
+     *     @OA\Schema(type="integer")
+     * )
      * @OA\Response(
      *     response=200,
      *     description="Returns all runs",
      *     @OA\JsonContent(
      *         type="object",
-     *         @OA\Property(property="run", type="array", @OA\Items(ref=@Model(type=Run::class)))
+     *         @OA\Property(property="total", type="int"),
+     *         @OA\Property(property="pages", type="int"),
+     *         @OA\Property(property="run", type="array", @OA\Items(ref=@Model(type=Run::class))),
      *     )
      * )
      */
-    public function getRunsAction(EntityManagerInterface $em, PaginatorInterface $paginator, Request $request)
+    public function getRunsAction(
+        RunRepository $repository,
+        Request       $request,
+    )
     {
-//        $page = $request->query->getInt('page', 1);
-//        $pageSize = $request->query->getInt('page_size', 10);
-//
-//        $repo = $em->getRepository(Run::class);
-//        $query = $repo->createQueryBuilder('r')->getQuery();
-//
-//        $runs = $paginator->paginate($query, $page, $pageSize);
-        $runs = $em->getRepository(Run::class)->findAll();
+        $page = $request->get('page', 1);
+        $pageSize = $request->get('pageSize', 100);
+        $runs = $repository->findAllByYear($request->get('year'), $pageSize, $pageSize * ($page - 1));
 
-        return ['run' => $runs];
+        return [
+            'total' => $runs->count(),
+            'pages' => ceil($runs->count() / $pageSize),
+            'run' => $runs,
+        ];
     }
 
     /**

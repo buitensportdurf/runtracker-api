@@ -4,15 +4,14 @@
 namespace App\Entity;
 
 
+use App\Repository\RunRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\Serializer\Annotation\Groups;
-use OpenApi\Annotations as OA;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass=RunRepository::class)
  * @ORM\Table(name="run")
  */
 class Run
@@ -135,6 +134,7 @@ class Run
 
     /**
      * @param mixed $date
+     *
      * @return Run
      */
     public function setDate($date)
@@ -153,6 +153,7 @@ class Run
 
     /**
      * @param mixed $city
+     *
      * @return Run
      */
     public function setCity($city)
@@ -171,6 +172,7 @@ class Run
 
     /**
      * @param mixed $age
+     *
      * @return Run
      */
     public function setAge($age)
@@ -189,6 +191,7 @@ class Run
 
     /**
      * @param Organization $organization
+     *
      * @return Run
      */
     public function setOrganization(Organization $organization)
@@ -207,6 +210,7 @@ class Run
 
     /**
      * @param bool $cancelled
+     *
      * @return Run
      */
     public function setCancelled(bool $cancelled): Run
@@ -225,6 +229,7 @@ class Run
 
     /**
      * @param mixed $subscribe
+     *
      * @return Run
      */
     public function setSubscribe($subscribe)
@@ -243,6 +248,7 @@ class Run
 
     /**
      * @param mixed $result
+     *
      * @return Run
      */
     public function setResult($result)
@@ -269,6 +275,7 @@ class Run
 
     /**
      * @param int|null $enrollId
+     *
      * @return Run
      */
     public function setEnrollId(?int $enrollId): Run
@@ -287,6 +294,7 @@ class Run
 
     /**
      * @param DateTime|null $opensAt
+     *
      * @return Run
      */
     public function setOpensAt(?DateTime $opensAt): Run
