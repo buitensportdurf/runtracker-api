@@ -8,72 +8,70 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-/**
- * @ORM\Entity(repositoryClass=UserRepository::class)
- */
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface
 {
     /**
      * @var integer
-     * @Groups({"from_circuit", "from_run"})
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
      */
+    #[Groups(['from_circuit', 'from_run'])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
     /**
      * @var string
-     * @Groups({"from_circuit", "from_run"})
-     * @ORM\Column(type="string", length=180, unique=true)
      */
+    #[Groups(['from_circuit', 'from_run'])]
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
     private $username;
 
     /**
      * @var ?string
-     * @Groups({"from_circuit", "from_run"})
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[Groups(['from_circuit', 'from_run'])]
+    #[ORM\Column(type: 'string', nullable: true)]
     private $firstName;
 
     /**
      * @var ?string
-     * @Groups({"from_circuit", "from_run"})
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[Groups(['from_circuit', 'from_run'])]
+    #[ORM\Column(type: 'string', nullable: true)]
     private $middleName;
 
     /**
      * @var ?string
-     * @Groups({"from_circuit", "from_run"})
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[Groups(['from_circuit', 'from_run'])]
+    #[ORM\Column(type: 'string', nullable: true)]
     private $lastName;
 
     /**
      * @var ?string
-     * @Groups({"from_circuit", "from_run"})
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[Groups(['from_circuit', 'from_run'])]
+    #[ORM\Column(type: 'string', nullable: true)]
     private $gender;
 
     /**
      * @var ?string
-     * @Groups({"from_circuit", "from_run"})
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[Groups(['from_circuit', 'from_run'])]
+    #[ORM\Column(type: 'string', nullable: true)]
     private $city;
 
     /**
      * @var string[]
-     * @ORM\Column(type="json")
      */
+    #[ORM\Column(type: 'json')]
     private $roles = [];
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: 'string')]
     private $password;
 
     public function __toString()
@@ -86,10 +84,8 @@ class User implements UserInterface
         return $this->id;
     }
 
-    /**
-     * @Groups({"from_run"})
-     * @SerializedName("type")
-     */
+    #[Groups(['from_run'])]
+    #[SerializedName('type')]
     public function getObjectType(): string
     {
         return 'user';
@@ -122,6 +118,7 @@ class User implements UserInterface
 
     /**
      * @param string|null $firstName
+     *
      * @return User
      */
     public function setFirstName(?string $firstName): User
@@ -140,6 +137,7 @@ class User implements UserInterface
 
     /**
      * @param string|null $middleName
+     *
      * @return User
      */
     public function setMiddleName(?string $middleName): User
@@ -158,6 +156,7 @@ class User implements UserInterface
 
     /**
      * @param string|null $lastName
+     *
      * @return User
      */
     public function setLastName(?string $lastName): User
@@ -176,6 +175,7 @@ class User implements UserInterface
 
     /**
      * @param string|null $gender
+     *
      * @return User
      */
     public function setGender(?string $gender): User
@@ -194,6 +194,7 @@ class User implements UserInterface
 
     /**
      * @param string|null $city
+     *
      * @return User
      */
     public function setCity(?string $city): User

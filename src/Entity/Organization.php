@@ -8,30 +8,22 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="organization")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'organization')]
 class Organization
 {
-    /**
-     * @Groups({"from_run"})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
+    #[Groups(['from_run'])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @Groups({"from_run"})
-     * @ORM\Column(type="string", unique=true)
-     */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'string', unique: true)]
     private $name;
 
-    /**
-     * @Groups({"from_run"})
-     * @ORM\Column(type="string")
-     */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'string')]
     private $website;
 
     public function __toString()
@@ -47,10 +39,8 @@ class Organization
         return $this->id;
     }
 
-    /**
-     * @Groups({"from_run"})
-     * @SerializedName("type")
-     */
+    #[Groups(['from_run'])]
+    #[SerializedName('type')]
     public function getObjectType(): string
     {
         return 'organization';
@@ -66,6 +56,7 @@ class Organization
 
     /**
      * @param mixed $name
+     *
      * @return Organization
      */
     public function setName($name)
@@ -84,6 +75,7 @@ class Organization
 
     /**
      * @param mixed $website
+     *
      * @return Organization
      */
     public function setWebsite($website)

@@ -8,10 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="circuit")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'circuit')]
 class Circuit
 {
     const TYPE_COMPETITION_LONG = 'long';
@@ -19,120 +17,119 @@ class Circuit
     const TYPE_COMPETITION_SHORT = 'short';
     const TYPE_COMPETITION_YOUTH = 'youth';
     const TYPE_COMPETITION_BASE = 'base';
-
     /**
      * @var integer
-     * @Groups({"from_circuit", "from_run"})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
      */
+    #[Groups(['from_circuit', 'from_run'])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
     /**
      * @var Run
-     * @Groups({"from_circuit"})
-     * @ORM\ManyToOne(targetEntity="App\Entity\Run", inversedBy="circuits")
      */
+    #[Groups(['from_circuit'])]
+    #[ORM\ManyToOne(targetEntity: 'App\Entity\Run', inversedBy: 'circuits')]
     private $run;
 
     /**
      * @var User[]
-     * @Groups({"from_circuit", "from_run"})
-     * @ORM\ManyToMany(targetEntity="App\Entity\User")
      */
+    #[Groups(['from_circuit', 'from_run'])]
+    #[ORM\ManyToMany(targetEntity: 'App\Entity\User')]
     private $users = [];
 
     /**
      * @var integer
-     * @Groups({"from_run"})
-     * @ORM\Column(type="integer")
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'integer')]
     private $userCount = 0;
 
     /**
      * @var integer
-     * @Groups({"from_run"})
-     * @ORM\Column(type="integer")
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'integer')]
     private $userCapacity = -1;
 
     /**
      * @var string
-     * @Groups({"from_run"})
-     * @ORM\Column(type="string")
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'string')]
     private $rawName;
 
     /**
      * @var ?float
-     * @Groups({"from_run"})
-     * @ORM\Column(type="float", nullable=true)
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'float', nullable: true)]
     private $distance;
 
     /**
      * @var ?string
-     * @Groups({"from_run"})
-     * @SerializedName("circuitType")
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[Groups(['from_run'])]
+    #[SerializedName('circuitType')]
+    #[ORM\Column(type: 'string', nullable: true)]
     private $type;
 
     /**
      * @var ?string
-     * @Groups({"from_run"})
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'string', nullable: true)]
     private $competitionType;
 
     /**
      * @var ?integer
-     * @Groups({"from_run"})
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $groupSize;
 
     /**
      * @var ?integer
-     * @Groups({"from_run"})
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $minAge;
 
     /**
      * @var ?integer
-     * @Groups({"from_run"})
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $maxAge;
 
     /**
      * @var ?string
-     * @Groups({"from_run"})
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'string', nullable: true)]
     private $description;
 
     /**
      * @var ?integer
-     * @Groups({"from_run"})
-     * @ORM\Column(type="integer")
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'integer')]
     private $price;
 
     /**
      * @var ?integer
-     * @Groups({"from_run"})
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $points;
 
     /**
      * @var boolean
-     * @Groups({"from_run"})
-     * @ORM\Column(type="boolean")
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'boolean')]
     private $dummy = false;
 
     public function __toString()
@@ -148,10 +145,8 @@ class Circuit
         return $this->id;
     }
 
-    /**
-     * @Groups({"from_run"})
-     * @SerializedName("type")
-     */
+    #[Groups(['from_run'])]
+    #[SerializedName('type')]
     public function getObjectType(): string
     {
         return 'circuit';
@@ -167,6 +162,7 @@ class Circuit
 
     /**
      * @param Run $run
+     *
      * @return Circuit
      */
     public function setRun(Run $run): Circuit
@@ -185,6 +181,7 @@ class Circuit
 
     /**
      * @param User[] $users
+     *
      * @return Circuit
      */
     public function setUsers(array $users): Circuit
@@ -195,6 +192,7 @@ class Circuit
 
     /**
      * @param User $user
+     *
      * @return $this
      */
     public function addUser(User $user): Circuit
@@ -215,6 +213,7 @@ class Circuit
 
     /**
      * @param int $userCount
+     *
      * @return Circuit
      */
     public function setUserCount(int $userCount): Circuit
@@ -233,6 +232,7 @@ class Circuit
 
     /**
      * @param int $userCapacity
+     *
      * @return Circuit
      */
     public function setUserCapacity(int $userCapacity): Circuit
@@ -251,6 +251,7 @@ class Circuit
 
     /**
      * @param string $rawName
+     *
      * @return Circuit
      */
     public function setRawName(string $rawName): Circuit
@@ -269,6 +270,7 @@ class Circuit
 
     /**
      * @param float|null $distance
+     *
      * @return Circuit
      */
     public function setDistance(?float $distance): Circuit
@@ -287,6 +289,7 @@ class Circuit
 
     /**
      * @param string|null $type
+     *
      * @return Circuit
      */
     public function setType(?string $type): Circuit
@@ -305,6 +308,7 @@ class Circuit
 
     /**
      * @param string|null $competitionType
+     *
      * @return Circuit
      */
     public function setCompetitionType(?string $competitionType): Circuit
@@ -323,6 +327,7 @@ class Circuit
 
     /**
      * @param int|null $groupSize
+     *
      * @return Circuit
      */
     public function setGroupSize(?int $groupSize): Circuit
@@ -341,6 +346,7 @@ class Circuit
 
     /**
      * @param int|null $minAge
+     *
      * @return Circuit
      */
     public function setMinAge(?int $minAge): Circuit
@@ -359,6 +365,7 @@ class Circuit
 
     /**
      * @param int|null $maxAge
+     *
      * @return Circuit
      */
     public function setMaxAge(?int $maxAge): Circuit
@@ -377,6 +384,7 @@ class Circuit
 
     /**
      * @param string|null $description
+     *
      * @return Circuit
      */
     public function setDescription(?string $description): Circuit
@@ -395,6 +403,7 @@ class Circuit
 
     /**
      * @param float|null $price
+     *
      * @return Circuit
      */
     public function setPrice(?float $price): Circuit
@@ -413,6 +422,7 @@ class Circuit
 
     /**
      * @param int|null $points
+     *
      * @return Circuit
      */
     public function setPoints(?int $points): Circuit
@@ -431,6 +441,7 @@ class Circuit
 
     /**
      * @param bool $dummy
+     *
      * @return Circuit
      */
     public function setDummy(bool $dummy): Circuit

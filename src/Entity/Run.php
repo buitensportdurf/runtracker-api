@@ -10,96 +10,93 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-/**
- * @ORM\Entity(repositoryClass=RunRepository::class)
- * @ORM\Table(name="run")
- */
+#[ORM\Entity(repositoryClass: RunRepository::class)]
+#[ORM\Table(name: 'run')]
 class Run
 {
     public const CIRCUIT_LONG = 'long';
     public const CIRCUIT_MEDIUM = 'medium';
     public const CIRCUIT_SHORT = 'short';
     public const CIRCUIT_YOUTH = 'youth';
-
     /**
      * @var integer
-     * @Groups({"from_run"})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
      */
+    #[Groups(['from_run'])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
     /**
      * @var DateTime
-     * @Groups({"from_run"})
-     * @ORM\Column(type="date")
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'date')]
     private $date;
 
     /**
      * @var string
-     * @Groups({"from_run"})
-     * @ORM\Column(type="string")
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'string')]
     private $city;
 
     /**
      * @var integer
-     * @Groups({"from_run"})
-     * @ORM\Column(type="integer")
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'integer')]
     private $age = 0;
 
     /**
      * @var Organization
-     * @Groups({"from_run"})
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization")
      */
+    #[Groups(['from_run'])]
+    #[ORM\ManyToOne(targetEntity: 'App\Entity\Organization')]
     private $organization;
 
     /**
      * @var boolean
-     * @Groups({"from_run"})
-     * @ORM\Column(type="boolean")
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'boolean')]
     private $cancelled = false;
 
     /**
      * subscribe url
      * @var string
-     * @Groups({"from_run"})
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'string', nullable: true)]
     private $subscribe;
 
     /**
      * results url
      * @var string
-     * @Groups({"from_run"})
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'string', nullable: true)]
     private $result;
 
     /**
      * @var ?Circuit[]
-     * @Groups({"from_run"})
-     * @ORM\OneToMany(targetEntity="App\Entity\Circuit", mappedBy="run")
      */
+    #[Groups(['from_run'])]
+    #[ORM\OneToMany(targetEntity: 'App\Entity\Circuit', mappedBy: 'run')]
     private $circuits;
 
     /**
      * @var ?integer
-     * @Groups({"from_run"})
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $enrollId;
 
     /**
      * @var ?DateTime
-     * @Groups({"from_run"})
-     * @ORM\Column(type="datetime", nullable=true)
      */
+    #[Groups(['from_run'])]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private $opensAt;
 
     public function __toString()
@@ -115,10 +112,8 @@ class Run
         return $this->id;
     }
 
-    /**
-     * @Groups({"from_run"})
-     * @SerializedName("type")
-     */
+    #[Groups(['from_run'])]
+    #[SerializedName('type')]
     public function getObjectType(): string
     {
         return 'run';
