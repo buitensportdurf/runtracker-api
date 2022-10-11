@@ -7,7 +7,7 @@ require_once 'recipe/common.php';
 set('application', 'animerss');
 
 // Project repository
-set('repository', 'git@github.com:buitensportdurf/runtracker-api.git');
+set('repository', 'git@git.loken.nl:ardent/runtracker-api.git');
 
 // [Optional] Allocate tty for git clone. Default value is false.
 set('git_tty', true);
@@ -21,7 +21,7 @@ set('allow_anonymous_stats', false);
 
 // Hosts
 host('api.survivalruns.nl')
-    ->user('www-data')
+    ->setRemoteUser('www-data')
     ->set('branch', function () {
         return input()->getOption('branch') ?: 'develop';
     })
@@ -57,27 +57,21 @@ task('deploy:cache:warmup', function () {
 
 desc('Deploy project');
 task('deploy', [
-    'deploy:info',
     'deploy:prepare',
-    'deploy:lock',
-    'deploy:release',
-    'deploy:update_code',
-    'deploy:shared',
     'deploy:vendors',
-    'deploy:writable',
     'deploy:cache:clear',
     'deploy:cache:warmup',
+    'database:migrate',
     'deploy:symlink',
     'deploy:unlock',
-    'cleanup',
+    'deploy:cleanup',
 ]);
 
-after('deploy', 'success');
+after('deploy', 'deploy:success');
 
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');
 
 // Migrate database before symlink new release.
 
-before('deploy:symlink', 'database:migrate');
 
