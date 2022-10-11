@@ -74,6 +74,9 @@ class User implements UserInterface
     #[ORM\Column(type: 'string')]
     private $password;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Image $profilePicture = null;
+
     public function __toString()
     {
         return $this->firstName . ' ' . $this->lastName;
@@ -89,6 +92,16 @@ class User implements UserInterface
     public function getObjectType(): string
     {
         return 'user';
+    }
+
+    #[Groups(['from_run'])]
+    public function getProfilePictureUrl(): string
+    {
+        if ($this->profilePicture) {
+            return sprintf('https://api.loken.nl/image/%d', $this->profilePicture->getId());
+        }
+
+        return '';
     }
 
     /**
@@ -258,5 +271,17 @@ class User implements UserInterface
     public function getUserIdentifier(): string
     {
         return $this->username;
+    }
+
+    public function getProfilePicture(): ?Image
+    {
+        return $this->profilePicture;
+    }
+
+    public function setProfilePicture(?Image $profilePicture): self
+    {
+        $this->profilePicture = $profilePicture;
+
+        return $this;
     }
 }
