@@ -98,7 +98,7 @@ class User implements UserInterface
     public function getProfilePictureUrl(): string
     {
         if ($this->profilePicture) {
-            return sprintf('https://api.loken.nl/image/%d', $this->profilePicture->getId());
+            return sprintf('https://api.survivalruns.nl/image/%d', $this->profilePicture->getId());
         }
 
         return '';
