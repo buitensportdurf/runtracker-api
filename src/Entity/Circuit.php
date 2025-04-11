@@ -30,14 +30,14 @@ class Circuit
      * @var Run
      */
     #[Groups(['from_circuit'])]
-    #[ORM\ManyToOne(targetEntity: 'App\Entity\Run', inversedBy: 'circuits')]
+    #[ORM\ManyToOne(targetEntity: Run::class, inversedBy: 'circuits')]
     private $run;
 
     /**
      * @var User[]
      */
     #[Groups(['from_circuit', 'from_run'])]
-    #[ORM\ManyToMany(targetEntity: 'App\Entity\User')]
+    #[ORM\ManyToMany(targetEntity: User::class)]
     private $users = [];
 
     /**

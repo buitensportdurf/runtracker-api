@@ -52,7 +52,7 @@ class Run
      * @var Organization
      */
     #[Groups(['from_run'])]
-    #[ORM\ManyToOne(targetEntity: 'App\Entity\Organization')]
+    #[ORM\ManyToOne(targetEntity: Organization::class)]
     private $organization;
 
     /**
@@ -82,7 +82,7 @@ class Run
      * @var ?Circuit[]
      */
     #[Groups(['from_run'])]
-    #[ORM\OneToMany(targetEntity: 'App\Entity\Circuit', mappedBy: 'run')]
+    #[ORM\OneToMany(mappedBy: 'run', targetEntity: Circuit::class)]
     private $circuits;
 
     /**
