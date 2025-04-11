@@ -6,29 +6,32 @@ use App\Entity\Circuit;
 use App\Entity\Organization;
 use App\Entity\Run;
 use App\Entity\User;
+use App\Repository\RunRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Pipeline\StageInterface;
 use Psr\Log\LoggerInterface;
 
-class StoreRuns implements StageInterface
+readonly class StoreRuns implements StageInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
-        private readonly LoggerInterface        $logger,
+        private EntityManagerInterface $em,
+        private LoggerInterface        $logger,
+        private RunRepository          $runRepo,
+        private UserRepository         $userRepo,
     ) {}
 
     public function __invoke(mixed $payload): mixed
     {
         $this->logger->notice('Start storing the data');
-        foreach ($payload as $rawRace) {
-            $runRepo = $this->em->getRepository(Run::class);
-            $organizationRepo = $this->em->getRepository(Organization::class);
-            $circuitRepo = $this->em->getRepository(Circuit::class);
-            $userRepo = $this->em->getRepository(User::class);
 
+        $organizationRepo = $this->em->getRepository(Organization::class);
+        $circuitRepo = $this->em->getRepository(Circuit::class);
+
+        foreach ($payload as $rawRace) {
             // Get the organization or create if not already exists
             if (!($organization = $organizationRepo->findOneBy(['name' => $rawRace['org']['name']]))) {
-                $organization = (new Organization())
+                $organization = new Organization()
                     ->setName($rawRace['org']['name'])
                     ->setWebsite($rawRace['org']['url'])
                 ;
@@ -38,10 +41,10 @@ class StoreRuns implements StageInterface
             }
 
             // First try to find existing run
-            $run = $runRepo->findOneBy(['date' => $rawRace['date'], 'city' => $rawRace['city']]);
+            $run = $this->runRepo->findOneBy(['date' => $rawRace['date'], 'city' => $rawRace['city']]);
             if (!$run) {
                 // Create the run
-                $run = (new Run())
+                $run = new Run()
                     ->setDate($rawRace['date'])
                     ->setCity($rawRace['city'])
                     ->setOrganization($organization)
@@ -74,7 +77,7 @@ class StoreRuns implements StageInterface
                     // We find by distance so that we don't overwrite existing ones
                     $circuit = $circuitRepo->findOneBy(['distance' => $distance, 'run' => $run]);
                     if (!$circuit) {
-                        $circuit = (new Circuit())
+                        $circuit = new Circuit()
                             ->setRawName($rawName)
                             ->setDistance($distance)
                             ->setPrice(0)
@@ -96,7 +99,7 @@ class StoreRuns implements StageInterface
                 foreach ($rawRace['circuits'] as $rawCircuit) {
                     $circuit = $circuitRepo->findOneBy(['rawName' => $rawCircuit['raw_name']]);
                     if (!$circuit) {
-                        $circuit = (new Circuit())
+                        $circuit = new Circuit()
                             ->setRawName($rawCircuit['raw_name'])
                             ->setDistance($rawCircuit['distance'])
                             ->setPrice($rawCircuit['price'])
@@ -133,17 +136,17 @@ class StoreRuns implements StageInterface
                         ));
                         $username = str_replace(' ', '_', $username);
                         // Find the user by first/last name
-                        $user = $userRepo->findOneBy(['username' => $username]);
+                        $user = $this->userRepo->findOneBy(['username' => $username]);
                         if (!$user) {
-                            $user = (new User())
+                            $user = new User()
                                 ->setCity($participant['city'])
                                 ->setFirstName($participant['first'])
                                 ->setMiddleName($participant['middle'])
                                 ->setLastName($participant['last'])
                                 ->setGender($participant['gender'])
                                 ->setUsername($username)
-                                ->setPassword('x')
-                            ; // hashed, so impossible to use
+                                ->setPassword('x') // hashed, so impossible to use
+                            ;
 
                             $this->em->persist($user);
                             $this->em->flush();

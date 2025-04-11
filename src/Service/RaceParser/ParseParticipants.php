@@ -9,8 +9,8 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ParseParticipants implements StageInterface
 {
-    private const PARTICIPANTS_URL = 'https://www.uvponline.nl/uvponlineF/inschrijven_overzicht/';
-    private const CIRCUIT_NAME_URL = 'https://www.uvponline.nl/uvponlineF/inschrijven/';
+    private const string PARTICIPANTS_URL = 'https://www.uvponline.nl/uvponlineF/inschrijven_overzicht/';
+    private const string CIRCUIT_NAME_URL = 'https://www.uvponline.nl/uvponlineF/inschrijven/';
 
     public function __construct(
         private readonly LoggerInterface $logger

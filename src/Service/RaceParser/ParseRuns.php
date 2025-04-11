@@ -10,21 +10,21 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ParseRuns implements StageInterface
 {
-    private const C_DATE = 0;
-    private const C_LOCATION = 1;
-    private const C_CLASS_L = 2;
-    private const C_CLASS_M = 3;
-    private const C_CLASS_K = 4;
-    private const C_CLASS_J = 5;
-    private const C_CLASS_B = 6;
-    private const C_QUALIFIER = 7;
-    private const C_DISTANCE = 8;
-    private const C_AGE = 9;
-    private const C_ORGANIZER = 10;
-    private const C_SUBSCRIBE = 11;
-    private const C_RESULT = 12;
+    private const int C_DATE = 0;
+    private const int C_LOCATION = 1;
+    private const int C_CLASS_L = 2;
+    private const int C_CLASS_M = 3;
+    private const int C_CLASS_K = 4;
+    private const int C_CLASS_J = 5;
+    private const int C_CLASS_B = 6;
+    private const int C_QUALIFIER = 7;
+    private const int C_DISTANCE = 8;
+    private const int C_AGE = 9;
+    private const int C_ORGANIZER = 10;
+    private const int C_SUBSCRIBE = 11;
+    private const int C_RESULT = 12;
 
-    private string $baseUrl = "https://www.uvponline.nl/uvponlineU/index.php/uvproot/wedstrijdschema";
+    private const string BASE_URL = "https://www.uvponline.nl/uvponlineU/index.php/uvproot/wedstrijdschema";
 
     public function __construct(
         private readonly LoggerInterface $logger
@@ -32,10 +32,10 @@ class ParseRuns implements StageInterface
 
     private function url(string $year): string
     {
-        return sprintf('%s/%s', $this->baseUrl, $year);
+        return sprintf('%s/%s', self::BASE_URL, $year);
     }
 
-    public function __invoke(mixed $payload): mixed
+    public function __invoke(mixed $payload): array
     {
         $allRuns = [];
         foreach ($payload as $year) {
