@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\RaceParser;
-
 
 use App\Entity\Circuit;
 use DateTime;
@@ -26,29 +24,18 @@ class ParseRuns implements StageInterface
     private const C_SUBSCRIBE = 11;
     private const C_RESULT = 12;
 
-    private $baseUrl = "https://www.uvponline.nl/uvponlineU/index.php/uvproot/wedstrijdschema";
+    private string $baseUrl = "https://www.uvponline.nl/uvponlineU/index.php/uvproot/wedstrijdschema";
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * ParseRuns constructor.
-     *
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
+    public function __construct(
+        private readonly LoggerInterface $logger
+    ) {}
 
     private function url(string $year): string
     {
         return sprintf('%s/%s', $this->baseUrl, $year);
     }
 
-    public function __invoke($payload)
+    public function __invoke(mixed $payload): mixed
     {
         $allRuns = [];
         foreach ($payload as $year) {
@@ -153,6 +140,7 @@ class ParseRuns implements StageInterface
 
             $allRuns = array_merge($allRuns, $runs);
         }
+
         return $allRuns;
     }
 }

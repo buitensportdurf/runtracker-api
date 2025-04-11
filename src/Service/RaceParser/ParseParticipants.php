@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\RaceParser;
-
 
 use App\Entity\Circuit;
 use League\Pipeline\StageInterface;
@@ -14,20 +12,14 @@ class ParseParticipants implements StageInterface
     private const PARTICIPANTS_URL = 'https://www.uvponline.nl/uvponlineF/inschrijven_overzicht/';
     private const CIRCUIT_NAME_URL = 'https://www.uvponline.nl/uvponlineF/inschrijven/';
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    public function __construct(
+        private readonly LoggerInterface $logger
+    ) {}
 
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    public function __invoke($rawRaces)
+    public function __invoke(mixed $payload): mixed
     {
         $this->logger->info('Start parsing circuits and participants');
-        foreach ($rawRaces as &$rawRace) {
+        foreach ($payload as &$rawRace) {
             $id = $rawRace['subscribeId'];
             if ($id !== -1) {
                 $rawRace['circuits'] = $this->getCircuits($id);
@@ -36,10 +28,10 @@ class ParseParticipants implements StageInterface
             }
             unset($rawRace);
         }
-        return $rawRaces;
+        return $payload;
     }
 
-    private function getCircuits(int $id)
+    private function getCircuits(int $id): array
     {
         // Parse the circuit data
         $circuitsP = $this->getCircuitsParticipants($id);
@@ -54,7 +46,7 @@ class ParseParticipants implements StageInterface
         return $circuits;
     }
 
-    private function getCircuitsParticipants($id)
+    private function getCircuitsParticipants(int $id): array
     {
         $url = sprintf('%s%s', self::PARTICIPANTS_URL, $id);
         $this->logger->info(sprintf('Circuits [%s] Getting all circuits for participants', $url));
@@ -70,7 +62,7 @@ class ParseParticipants implements StageInterface
         });
     }
 
-    private function getCircuitsData($id)
+    private function getCircuitsData(int $id): array
     {
         $url = sprintf('%s%s', self::CIRCUIT_NAME_URL, $id);
         $this->logger->info(sprintf('Circuits [%s] Getting all circuits for data', $url));
@@ -153,12 +145,12 @@ class ParseParticipants implements StageInterface
         });
     }
 
-    private function containsOneOfWords(string $text, array $words)
+    private function containsOneOfWords(string $text, array $words): bool
     {
         return preg_match(sprintf('/(%s)/', implode('|', $words)), $text) === 1;
     }
 
-    private function findOneOfWords(string $text, array $words)
+    private function findOneOfWords(string $text, array $words): false|string
     {
         if (preg_match(sprintf('/(%s)/', implode('|', $words)), $text, $matches) === 1) {
             return $matches[1];
@@ -166,7 +158,7 @@ class ParseParticipants implements StageInterface
         return false;
     }
 
-    private function getParticipants(string $url)
+    private function getParticipants(string $url): array
     {
         $this->logger->info(sprintf('Participants [%s] Getting all', $url));
         $crawler = new Crawler(file_get_contents($url));
@@ -196,12 +188,12 @@ class ParseParticipants implements StageInterface
         return $participants;
     }
 
-    private function sanitize($text)
+    private function sanitize(string $text): string
     {
         return trim(preg_replace('/[^\pL ]/u', '', $text));
     }
 
-    private function splitMiddleLast($name)
+    private function splitMiddleLast($name): array
     {
         $middleParts = ['van', 'de', 'den', 'der'];
         $segments = explode(' ', $name);

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\RaceParser;
-
 
 use App\Entity\Circuit;
 use App\Entity\Organization;
@@ -14,23 +12,15 @@ use Psr\Log\LoggerInterface;
 
 class StoreRuns implements StageInterface
 {
-    /**
-     * StoreRaces constructor.
-     *
-     * @param EntityManagerInterface $em
-     * @param LoggerInterface        $logger
-     */
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly LoggerInterface        $logger,
-    )
-    {
-    }
+    ) {}
 
-    public function __invoke($rawRaces)
+    public function __invoke(mixed $payload): mixed
     {
         $this->logger->notice('Start storing the data');
-        foreach ($rawRaces as $rawRace) {
+        foreach ($payload as $rawRace) {
             $runRepo = $this->em->getRepository(Run::class);
             $organizationRepo = $this->em->getRepository(Organization::class);
             $circuitRepo = $this->em->getRepository(Circuit::class);
@@ -40,7 +30,8 @@ class StoreRuns implements StageInterface
             if (!($organization = $organizationRepo->findOneBy(['name' => $rawRace['org']['name']]))) {
                 $organization = (new Organization())
                     ->setName($rawRace['org']['name'])
-                    ->setWebsite($rawRace['org']['url']);
+                    ->setWebsite($rawRace['org']['url'])
+                ;
                 $this->logger->info(sprintf('Creating organization %s', $organization));
                 $this->em->persist($organization);
                 $this->em->flush(); // Flush to make sure we don't get duplicate entries
@@ -54,7 +45,8 @@ class StoreRuns implements StageInterface
                     ->setDate($rawRace['date'])
                     ->setCity($rawRace['city'])
                     ->setOrganization($organization)
-                    ->setAge($rawRace['age']);
+                    ->setAge($rawRace['age'])
+                ;
 
                 $this->logger->info(sprintf('Creating new run %s', $run));
             }
@@ -63,7 +55,8 @@ class StoreRuns implements StageInterface
                 ->setEnrollId($rawRace['subscribeId'])
                 ->setCancelled($rawRace['cancelled'])
                 ->setSubscribe($rawRace['subscriber'] ?? null)
-                ->setResult($rawRace['result'] ?? null);
+                ->setResult($rawRace['result'] ?? null)
+            ;
 
             $this->em->persist($run);
             $this->em->flush(); // Flush to make sure we don't get duplicate entries
@@ -88,7 +81,8 @@ class StoreRuns implements StageInterface
                             ->setDummy(true)
                             ->setType('dummy')
                             ->setCompetitionType(array_pop($competitions))
-                            ->setRun($run);
+                            ->setRun($run)
+                        ;
 
                         $this->logger->debug(sprintf('Creating dummy %s for run %s', $circuit, $run));
 
@@ -113,7 +107,8 @@ class StoreRuns implements StageInterface
                             ->setMaxAge($rawCircuit['max_age'])
                             ->setUserCapacity($rawCircuit['participants_max'])
                             ->setDummy(false)
-                            ->setRun($run);
+                            ->setRun($run)
+                        ;
 
                         // Delete the dummy for this distance if it exists
                         $dummy = $circuitRepo->findOneBy(['distance' => $rawCircuit['distance'], 'run' => $run, 'dummy' => true]);
@@ -124,8 +119,9 @@ class StoreRuns implements StageInterface
                     }
                     // Updatable values
                     $circuit->setUserCount($rawCircuit['participants_current'])
-                        ->setPoints($rawCircuit['points'])
-                        ->setCompetitionType($rawCircuit['competition_type']);
+                            ->setPoints($rawCircuit['points'])
+                            ->setCompetitionType($rawCircuit['competition_type'])
+                    ;
 
                     $this->em->persist($circuit);
                     $this->em->flush();
@@ -146,7 +142,8 @@ class StoreRuns implements StageInterface
                                 ->setLastName($participant['last'])
                                 ->setGender($participant['gender'])
                                 ->setUsername($username)
-                                ->setPassword('x'); // hashed, so impossible to use
+                                ->setPassword('x')
+                            ; // hashed, so impossible to use
 
                             $this->em->persist($user);
                             $this->em->flush();
@@ -159,6 +156,6 @@ class StoreRuns implements StageInterface
             }
         }
         $this->em->flush();
-        return $rawRaces;
+        return $payload;
     }
 }
