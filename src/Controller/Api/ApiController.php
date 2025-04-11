@@ -1,59 +1,57 @@
 <?php
 
-
 namespace App\Controller\Api;
-
 
 use App\Entity\Run;
 use App\Repository\RunRepository;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use OpenApi\Annotations as OA;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ApiController extends AbstractFOSRestController
 {
-    /**
-     * Retrieves all runs
-     * @Rest\Get(path="/runs")
-     * @Rest\View(serializerGroups={"from_run"})
-     * @OA\Parameter(
-     *     name="year",
-     *     in="query",
-     *     description="Only get a specific year",
-     *     required=false,
-     *     @OA\Schema(type="integer")
-     * )
-     * @OA\Parameter(
-     *     name="page",
-     *     in="query",
-     *     description="Get single page",
-     *     required=false,
-     *     @OA\Schema(type="integer")
-     * )
-     * @OA\Parameter(
-     *     name="pageSize",
-     *     in="query",
-     *     description="Set page size, default is 100",
-     *     required=false,
-     *     @OA\Schema(type="integer")
-     * )
-     * @OA\Response(
-     *     response=200,
-     *     description="Returns all runs",
-     *     @OA\JsonContent(
-     *         type="object",
-     *         @OA\Property(property="total", type="int"),
-     *         @OA\Property(property="pages", type="int"),
-     *         @OA\Property(property="run", type="array", @OA\Items(ref=@Model(type=Run::class))),
-     *     )
-     * )
-     */
+    #[Rest\Get(path: '/api/runs')]
+    #[Rest\View(serializerGroups: ['from_run'])]
+    #[OA\Parameter(
+        name: 'year',
+        description: 'Only get a specific year',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\Parameter(
+        name: 'page',
+        description: 'Get single page',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\Parameter(
+        name: 'pageSize',
+        description: 'Set page size, default is 100',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns all runs',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'total', type: 'int'),
+                new OA\Property(property: 'pages', type: 'int'),
+                new OA\Property(property: 'run', type: 'array', items: new OA\Items(ref: new Model(type: Run::class))),
+            ],
+            type: 'object'
+        )
+    )]
     public function getRunsAction(
         RunRepository $repository,
         Request       $request,
-    )
+    ): array
     {
         $page = $request->get('page', 1);
         $pageSize = $request->get('pageSize', 100);
@@ -66,20 +64,19 @@ class ApiController extends AbstractFOSRestController
         ];
     }
 
-    /**
-     * Retrieves one run
-     * @Rest\Get(path="/runs/{id}")
-     * @Rest\View(serializerGroups={"from_run"})
-     * @OA\Response(
-     *     response=200,
-     *     description="Returns one run",
-     *     @OA\JsonContent(
-     *         type="object",
-     *         @OA\Property(property="run", ref=@Model(type=Run::class) )
-     *     )
-     * )
-     */
-    public function getRunAction(Run $run)
+    #[Rest\Get(path: '/api/runs/{id}')]
+    #[Rest\View(serializerGroups: ['from_run'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns one run',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'run', ref: new Model(type: Run::class)),
+            ],
+            type: 'object'
+        )
+    )]
+    public function getRunAction(Run $run): array
     {
         return ['run' => $run];
     }
