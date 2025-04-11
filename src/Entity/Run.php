@@ -1,11 +1,11 @@
 <?php
 
-
 namespace App\Entity;
-
 
 use App\Repository\RunRepository;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -18,96 +18,69 @@ class Run
     public const CIRCUIT_MEDIUM = 'medium';
     public const CIRCUIT_SHORT = 'short';
     public const CIRCUIT_YOUTH = 'youth';
-    /**
-     * @var integer
-     */
+
     #[Groups(['from_run'])]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ORM\Column(type: 'integer')]
-    private $id;
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id;
 
-    /**
-     * @var DateTime
-     */
     #[Groups(['from_run'])]
     #[ORM\Column(type: 'date')]
-    private $date;
+    private ?DateTime $date = null;
 
-    /**
-     * @var string
-     */
     #[Groups(['from_run'])]
-    #[ORM\Column(type: 'string')]
-    private $city;
+    #[ORM\Column]
+    private ?string $city = null;
 
-    /**
-     * @var integer
-     */
     #[Groups(['from_run'])]
-    #[ORM\Column(type: 'integer')]
-    private $age = 0;
+    #[ORM\Column]
+    private int $age = 0;
 
-    /**
-     * @var Organization
-     */
     #[Groups(['from_run'])]
-    #[ORM\ManyToOne(targetEntity: Organization::class)]
-    private $organization;
+    #[ORM\ManyToOne]
+    private ?Organization $organization = null;
 
-    /**
-     * @var boolean
-     */
     #[Groups(['from_run'])]
-    #[ORM\Column(type: 'boolean')]
-    private $cancelled = false;
+    #[ORM\Column]
+    private bool $cancelled = false;
 
-    /**
-     * subscribe url
-     * @var string
-     */
+    /** subscribe url */
     #[Groups(['from_run'])]
-    #[ORM\Column(type: 'string', nullable: true)]
-    private $subscribe;
+    #[ORM\Column(nullable: true)]
+    private ?string $subscribe = null;
 
-    /**
-     * results url
-     * @var string
-     */
+    /** results url */
     #[Groups(['from_run'])]
-    #[ORM\Column(type: 'string', nullable: true)]
-    private $result;
+    #[ORM\Column(nullable: true)]
+    private ?string $result = null;
 
     /**
-     * @var ?Circuit[]
+     * @var ArrayCollection<Circuit>
      */
     #[Groups(['from_run'])]
     #[ORM\OneToMany(mappedBy: 'run', targetEntity: Circuit::class)]
-    private $circuits;
+    private ArrayCollection $circuits;
 
-    /**
-     * @var ?integer
-     */
     #[Groups(['from_run'])]
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $enrollId;
+    #[ORM\Column(nullable: true)]
+    private ?int $enrollId = null;
 
-    /**
-     * @var ?DateTime
-     */
     #[Groups(['from_run'])]
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private $opensAt;
+    #[ORM\Column(nullable: true)]
+    private ?DateTime $opensAt = null;
+
+    public function __construct()
+    {
+        $this->circuits = new ArrayCollection();
+    }
 
     public function __toString()
     {
         return sprintf('%s in %s', $this->date->format('Y-m-d'), $this->city);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -119,77 +92,45 @@ class Run
         return 'run';
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDate()
+    public function getDate(): ?DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param mixed $date
-     *
-     * @return Run
-     */
-    public function setDate($date)
+    public function setDate(DateTime $date): self
     {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getCity()
+    public function getCity(): ?string
     {
         return $this->city;
     }
 
-    /**
-     * @param mixed $city
-     *
-     * @return Run
-     */
-    public function setCity($city)
+    public function setCity(?string $city): self
     {
         $this->city = $city;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getAge()
+    public function getAge(): ?int
     {
         return $this->age;
     }
 
-    /**
-     * @param mixed $age
-     *
-     * @return Run
-     */
-    public function setAge($age)
+    public function setAge(int $age): self
     {
         $this->age = $age;
         return $this;
     }
 
-    /**
-     * @return Organization
-     */
-    public function getOrganization()
+    public function getOrganization(): ?Organization
     {
         return $this->organization;
     }
 
-    /**
-     * @param Organization $organization
-     *
-     * @return Run
-     */
-    public function setOrganization(Organization $organization)
+    public function setOrganization(Organization $organization): self
     {
         $this->organization = $organization;
         return $this;
@@ -214,84 +155,52 @@ class Run
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getSubscribe()
+    public function getSubscribe(): bool
     {
         return $this->subscribe;
     }
 
-    /**
-     * @param mixed $subscribe
-     *
-     * @return Run
-     */
-    public function setSubscribe($subscribe)
+    public function setSubscribe(string $subscribe): self
     {
         $this->subscribe = $subscribe;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getResult()
+    public function getResult(): ?string
     {
         return $this->result;
     }
 
-    /**
-     * @param mixed $result
-     *
-     * @return Run
-     */
-    public function setResult($result)
+    public function setResult(?string $result): self
     {
         $this->result = $result;
         return $this;
     }
 
     /**
-     * @return Circuit[]|null
+     * @return ArrayCollection<Circuit>
      */
-    public function getCircuits()
+    public function getCircuits(): Collection
     {
         return $this->circuits;
     }
 
-    /**
-     * @return int|null
-     */
     public function getEnrollId(): ?int
     {
         return $this->enrollId;
     }
 
-    /**
-     * @param int|null $enrollId
-     *
-     * @return Run
-     */
     public function setEnrollId(?int $enrollId): Run
     {
         $this->enrollId = $enrollId;
         return $this;
     }
 
-    /**
-     * @return DateTime|null
-     */
     public function getOpensAt(): ?DateTime
     {
         return $this->opensAt;
     }
 
-    /**
-     * @param DateTime|null $opensAt
-     *
-     * @return Run
-     */
     public function setOpensAt(?DateTime $opensAt): Run
     {
         $this->opensAt = $opensAt;
