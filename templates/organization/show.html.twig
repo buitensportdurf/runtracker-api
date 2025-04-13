@@ -3,5 +3,6 @@
 {% set title %}Organization {{ organization }}{% endset %}
 
 {% block body %}
+    <h5>Circuits</h5>
     {{ include('run/_list.html.twig', {runs: organization.runs}) }}
 {% endblock %}

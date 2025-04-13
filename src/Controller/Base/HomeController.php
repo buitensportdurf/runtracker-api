@@ -13,14 +13,15 @@ class HomeController extends AbstractController
     #[Route(path: '/', name: 'home')]
     public function index(): Response
     {
-        return $this->redirectToRoute('app.swagger_ui');
+        return $this->redirectToRoute('app_front_organization_index');
+//        return $this->redirectToRoute('app.swagger_ui');
     }
 
     #[Route(path: '/parse')]
     public function parse(RunParserService $rp): Response
     {
         $rp->updateRuns();
-        return $this->render('base.html.twig');
+        return $this->render('base/base.html.twig');
     }
 
     #[Route(path: '/empty')]
