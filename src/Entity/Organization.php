@@ -1,9 +1,9 @@
 <?php
 
-
 namespace App\Entity;
 
-
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -14,27 +14,32 @@ class Organization
 {
     #[Groups(['from_run'])]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[ORM\Column(type: 'integer')]
-    private $id;
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
     #[Groups(['from_run'])]
-    #[ORM\Column(type: 'string', unique: true)]
-    private $name;
+    #[ORM\Column(unique: true)]
+    private ?string $name = null;
 
     #[Groups(['from_run'])]
-    #[ORM\Column(type: 'string')]
-    private $website;
+    #[ORM\Column]
+    private ?string $website = null;
+
+    #[ORM\OneToMany(mappedBy: 'organization', targetEntity: Run::class)]
+    private Collection $runs;
+
+    public function __construct()
+    {
+        $this->runs = new ArrayCollection();
+    }
 
     public function __toString()
     {
         return $this->name;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -46,41 +51,30 @@ class Organization
         return 'organization';
     }
 
-    /**
-     * @return mixed
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param mixed $name
-     *
-     * @return Organization
-     */
-    public function setName($name)
+    public function setName(?string $name): self
     {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getWebsite()
+    public function getWebsite(): ?string
     {
         return $this->website;
     }
 
-    /**
-     * @param mixed $website
-     *
-     * @return Organization
-     */
-    public function setWebsite($website)
+    public function setWebsite($website): self
     {
         $this->website = $website;
         return $this;
+    }
+
+    public function getRuns(): Collection
+    {
+        return $this->runs;
     }
 }

@@ -1,5 +1,20 @@
 controllers:
     resource:
-        path: ../src/Controller/
-        namespace: App\Controller
+        path: ../src/Controller/Base/
+        namespace: App\Controller\Base
     type: attribute
+
+
+api:
+    resource:
+        path: ../src/Controller/Api/
+        namespace: App\Controller\Api
+    type: attribute
+    prefix: /api
+
+front:
+    resource:
+        path: ../src/Controller/Front/
+        namespace: App\Controller\Front
+    type: attribute
+    prefix: /front

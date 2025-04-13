@@ -1,0 +1,14 @@
+{% extends 'base/base.html.twig' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm mx-auto">
+                {% block column1 %}{% endblock %}
+            </div>
+            <div class="col-sm mx-auto">
+                {% block column2 %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

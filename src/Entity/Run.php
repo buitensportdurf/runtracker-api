@@ -38,7 +38,7 @@ class Run
     private int $age = 0;
 
     #[Groups(['from_run'])]
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'runs')]
     private ?Organization $organization = null;
 
     #[Groups(['from_run'])]
@@ -60,7 +60,7 @@ class Run
      */
     #[Groups(['from_run'])]
     #[ORM\OneToMany(mappedBy: 'run', targetEntity: Circuit::class)]
-    private ArrayCollection $circuits;
+    private Collection $circuits;
 
     #[Groups(['from_run'])]
     #[ORM\Column(nullable: true)]

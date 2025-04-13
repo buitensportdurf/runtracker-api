@@ -1,0 +1,10 @@
+<div class="list-group">
+    {% for circuit in circuits %}
+        <a class="list-group-item list-group-item-action"
+           href="{{ path('app_front_circuit_show', {id: circuit.id}) }}">
+            {{ circuit }}
+            <span class="badge bg-secondary">{{ circuit.distance }}</span>
+            <span class="badge bg-secondary">{{ circuit.competitionType }}</span>
+        </a>
+    {% endfor %}
+</div>

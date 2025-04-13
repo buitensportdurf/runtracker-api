@@ -1,0 +1,7 @@
+{% extends 'base/one.column.html.twig' %}
+
+{% set title %}Runs for year {{ year }}{% endset %}
+
+{% block body %}
+    {{ include('run/_list.html.twig') }}
+{% endblock %}

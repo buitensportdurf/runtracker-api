@@ -19,10 +19,11 @@ class RunRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('r');
         if ($year) {
-            $qb->where('r.date > :beginYear')
-                ->andWhere('r.date < :endYear')
-                ->setParameter('beginYear', new DateTime(sprintf('%d-01-01 00:00', $year)))
-                ->setParameter('endYear', new DateTime(sprintf('%d-12-31 00:00', $year)));
+            $qb->where('r.date > :staDate')
+               ->andWhere('r.date < :endDate')
+               ->setParameter('staDate', new DateTime(sprintf('%d-07-01 00:00', $year)))
+               ->setParameter('endDate', new DateTime(sprintf('%d-06-31 00:00', $year + 1)))
+            ;
         }
         if ($offset) {
             $qb->setFirstResult($offset);

@@ -1,0 +1,39 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark" style="z-index: 1;">
+    <div class="container-fluid">
+        <a title="RunTracker" class="navbar-brand" href="{{ path('home') }}">RunTracker</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app.swagger_ui') }}">Api</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_front_organization_index') }}">Organizations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_front_run_index', {year: 2023}) }}">Runs 2023-2024</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav my-2 my-lg-0">
+                {% if app.environment == 'dev' %}
+                    <li class="nav-item">
+                        <a class="btn navbar-text bg-danger" href="#">dev</a> &nbsp;
+                    </li>
+                {% endif %}
+{#                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}#}
+{#                    <span class="nav-item navbar-text mr-sm-2">Logged in as</span>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{{ path('user_profile_private') }}">{{ app.user.username }}</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{{ path('logout') }}">Logout</a>#}
+{#                    </li>#}
+{#                {% endif %}#}
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ApiController extends AbstractFOSRestController
 {
-    #[Rest\Get(path: '/api/runs')]
+    #[Rest\Get(path: '/runs')]
     #[Rest\View(serializerGroups: ['from_run'])]
     #[OA\Parameter(
         name: 'year',
@@ -63,7 +63,7 @@ class ApiController extends AbstractFOSRestController
         ];
     }
 
-    #[Rest\Get(path: '/api/runs/{id}')]
+    #[Rest\Get(path: '/runs/{id}')]
     #[Rest\View(serializerGroups: ['from_run'])]
     #[OA\Response(
         response: 200,

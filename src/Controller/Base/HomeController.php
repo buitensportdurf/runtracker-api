@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Base;
 
 use App\Entity\Run;
 use App\Service\RunParserService;
@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
-    #[Route(path: '/')]
+    #[Route(path: '/', name: 'home')]
     public function index(): Response
     {
         return $this->redirectToRoute('app.swagger_ui');
@@ -26,7 +26,7 @@ class HomeController extends AbstractController
     #[Route(path: '/empty')]
     public function empty(): Response
     {
-        return $this->render('base.html.twig');
+        return $this->render('base/one.column.html.twig');
     }
 
     #[Route(path: '/race/{id}')]

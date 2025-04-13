@@ -1,0 +1,14 @@
+{% extends 'base/one.column.html.twig' %}
+
+{% set title %}Organizations{% endset %}
+
+{% block body %}
+    <div class="list-group">
+        {% for organization in organizations %}
+            <a class="list-group-item list-group-item-action"
+               href="{{ path('app_front_organization_show', {'id': organization.id}) }}">
+                {{ organization.name }}
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}

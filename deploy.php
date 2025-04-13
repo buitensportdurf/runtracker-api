@@ -4,7 +4,7 @@ namespace Deployer;
 require_once 'recipe/common.php';
 
 // Project name
-set('application', 'animerss');
+set('application', 'runtracker-api');
 
 // Project repository
 set('repository', 'git@git.loken.nl:ardent/runtracker-api.git');
